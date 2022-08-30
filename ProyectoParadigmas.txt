@@ -1,0 +1,76 @@
+
+
+;Funcion constructora de imagenes
+;Estructuras basadas en listas
+;Prerequisitos: Es necesario las otras funciones constructoras como bitmap, pixmap, hexmap}
+;Por lo cual, antes de generar la imagen, se deben generar las otras funciones
+
+
+
+
+;TDA pixbit-d (bitmap)
+;Dominio: W (int) X Z (int) X bit([0|1] X depth(int))
+;Recorrido: pixbit-d
+;Recursion: No se usa
+
+(define bitmap
+  (lambda(X Y Bit depth)
+    (if(and(integer? X)
+           (integer? Y)
+           (number? Bit)
+           (integer? depth))
+       (list X Y Bit depth)
+       null)
+    )
+  )
+
+;Ejemplo uso
+;(bitmap 30 40 0 10)
+
+
+;Pertenencia constructor bitmap
+;Verificar la pertenencia si es un bitmap
+;Dominio: bitmap
+;Recorrido: booleano
+
+(define bitmap?
+  (lambda(bitmap? bitmap)
+    (if(list? bitmap)
+       (if(and(integer? (car bitmap))
+              (integer?(car(cdr bitmap)))
+              (number? (car(car(cdr bitmap))))
+              (integer?(car(car(car(cdr bitmap)))))
+             )
+            #t
+            #f
+          )
+         #f
+       )
+    )
+  )
+
+
+
+
+
+
+
+;TDA pixrgb-d (pixmap)
+;Dominio: W(int) X Z (int) X r(C) X g(C) X b(C) X d(int)
+;Recorrido: pixrgb
+;Recursion: No se usa
+
+
+
+;TDA pixhex-d (hexmap)
+;Dominio: W(int) X Z(int) X hex(String) X d(int)
+;Recorrido: pixhex
+;Recursion: no se usa
+
+
+
+;TDA imagen
+;Dominio: Largo (int) X Alto (int) X [pixbit-d*|pixrgb-d*|pixhex-d*]
+;Recorrido: imagen
+;Recursion: No se usa
+
