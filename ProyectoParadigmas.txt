@@ -13,6 +13,7 @@
 ;Recorrido: pixbit-d
 ;Recursion: No se usa
 
+
 (define bitmap
   (lambda(X Y Bit depth)
     (if(and(integer? X)
@@ -48,6 +49,56 @@
        )
     )
   )
+
+
+;Selector bitmap
+;Seleccionar la coordenada X del elemento bitmap
+;Dominio: bitmap X Elemento
+;Recorrido: bitmap
+
+
+(define(bitmap->CoordenadaX bitmap)
+  (if(bitmap? bitmap)
+     (car bitmap)
+     null))
+
+
+;Selector bitmap
+;Seleccionar la coordenada Y del elemento bitmap
+;Dominio: bitmap X Elemento
+;Recorrido: bitmap
+
+
+(define(bitmap->CoordenadaY bitmap)
+  (if(bitmap? bitmap)
+     (car(cdr bitmap))
+     null))
+
+
+;Selector bitmap
+;Seleccionar el bit del elemento bitmap
+;Dominio: bitmap X Elemento
+;Recorrido: bitmap
+
+
+(define(bitmap->Bit bitmap)
+  (if(bitmap? bitmap)
+     (car(cdr(cdr bitmap)))
+     null))
+
+
+;Selector bitmap
+;Seleccionar el depth del elemento bitmap
+;Dominio: bitmap X Elemento
+;Recorrido: bitmap
+
+
+(define(bitmap->depth bitmap)
+  (if(bitmap? bitmap)
+     (car(cdr(cdr(cdr bitmap))))
+     null))
+
+
 
 
 
