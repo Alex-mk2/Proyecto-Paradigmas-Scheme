@@ -101,15 +101,57 @@
 
 
 
+;Modificadores bitmap
+;Apartado de funciones modificadoras para bitmap
+;Dominio: bitmap X Elemento
+;Recorrido: bitmap
 
 
 
 
 
 ;TDA pixrgb-d (pixmap)
-;Dominio: W(int) X Z (int) X r(C) X g(C) X b(C) X d(int)
-;Recorrido: pixrgb
-;Recursion: No se usa
+;Constructor para generar un pixbit
+;Dominio: W(int) X Z(int) X R(C) X G(C) X B(C) X D(int)
+;Recorrido: Pixmap
+;Recursion: no se usa
+
+(define(pixmap)
+  (lambda(X Y R G B D)
+    (if(and(integer? X)
+           (integer? Y)
+           (integer? R)
+           (integer? G)
+           (integer? B)
+           (integer? D))
+       (list X Y R G B D)
+       null)
+    )
+  )
+
+;Pertenencia pixrgb-d->pixmap
+;Constructor pixmap
+;Dominio: pixmap
+;Recorrido: booleano
+;Recursión: No se usa
+
+(define pixmap?
+  (lambda(pixmap? pixmap)
+    (if(list? pixmap)
+       (if(and(integer? (car pixmap))
+              (integer? (car(cdr pixmap)))
+              (integer? (car(cdr(cdr pixmap))))
+              (integer? (car(cdr(cdr(cdr pixmap)))))
+              (integer? (car(cdr(cdr(cdr(cdr pixmap))))))
+              (integer? (car(cdr(cdr(cdr(cdr(cdr pixmap)))))))
+              )
+          #t
+          #f
+          )
+       #f
+       )
+    )
+  )
 
 
 
@@ -117,6 +159,7 @@
 ;Dominio: W(int) X Z(int) X hex(String) X d(int)
 ;Recorrido: pixhex
 ;Recursion: no se usa
+
 
 
 
