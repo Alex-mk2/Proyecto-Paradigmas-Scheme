@@ -160,6 +160,19 @@
 ;Recorrido: pixhex
 ;Recursion: no se usa
 
+(define hexmap
+  (lambda(X Y hex d)
+    (if(and(integer? X)
+           (integer? Y)
+           (string? hex)
+           (integer? d))
+       (list X Y hex d)
+       null)
+    )
+  )
+
+
+
 
 
 
