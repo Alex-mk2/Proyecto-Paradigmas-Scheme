@@ -171,6 +171,23 @@
     )
   )
 
+;Pertenencia hexmap
+(define hexmap?
+  (lambda(hexmap? hexmap)
+    (if(list? hexmap)
+       (if(and(integer? (car hexmap))
+              (integer? (car(cdr hexmap)))
+              (integer? (car(cdr(cdr hexmap))))
+              (integer? (car(cdr(cdr(cdr hexmap)))))
+
+              )
+             #t
+             #f
+          )
+         #f
+       )
+    )
+  )
 
 
 
