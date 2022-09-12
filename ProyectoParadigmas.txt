@@ -154,6 +154,57 @@
   )
 
 
+;Selectores pixmap-d (pixmap)
+
+;Selecciona la coordenada X del elemento pixmap
+;En este caso toma el primer elememento del constructor del pixmap
+(define(CoordenadaX->pixmap)
+  (if(pixmap? pixmap)
+     (car pixmap)
+     null)
+  )
+
+;Selector coordenada Y del elemento pixmap
+;En este caso toma el segundo elemento de la coordenada pixmap
+(define(CoordenadaY->pixmap pixmap)
+  (if(pixmap? pixmap)
+     (car (cdr pixmap))
+     null)
+  )
+
+;Selector R, elemento color (Puede tomar valor entre 0 hasta 255)
+;Selecciona el tercer elemento de la lista pixmap
+(define(ColorR->pixmap pixmap)
+  (if(pixmap? pixmap)
+     (car(cdr(cdr pixmap)))
+     null)
+  )
+
+;Selector G, elemento color (Nuevamente puede tomar valores entre 0 y 255)
+;Selecciona el cuarto elemento de la lista píxmap o pixbit-d
+(define (ColorG->pixmap pixmap)
+  (if(pixmap? pixmap)
+     (car(cdr(cdr(cdr pixmap))))
+     null))
+
+;Selector B, elemento color (0-255)
+;Selecciona el quinto elemento de la lista pixmap o pixbit-d
+(define(ColorB->pixmap pixmap)
+  (if(pixmap? pixmap)
+     (car(cdr(cdr(cdr(cdr pixmap)))))
+     null))
+
+;Selector D, un valor entero cualquiera
+;Selecciona el ultimo elemento de la lista pixmap o pixbit-d
+(define(D->pixmap pixmap)
+  (if(pixmap? pixmap)
+     (car(cdr(cdr(cdr(cdr(cdr pixmap))))))
+     null)
+  )
+
+
+
+
 
 ;TDA pixhex-d (hexmap)
 ;Dominio: W(int) X Z(int) X hex(String) X d(int)
