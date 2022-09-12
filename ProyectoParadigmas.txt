@@ -241,6 +241,39 @@
   )
 
 
+;Selectores hexmap o hexmap-d
+;Selecciona los elementos de la lista hexmap
+;En este caso se tienen que tomar todos los elementos de esa lista
+;Aquí se comienza tomando la coordenada X de la lista hexmap
+(define(CoordenadaX->hexmap hexmap)
+  (if(hexmap? hexmap)
+     (car hexmap)
+     null))
+
+;Selector hexmap coordenada Y
+;Selecciona el segundo elemento de la lista hexmap
+(define(CoordenadaY->hexmap hexmap)
+  (if(hexmap? hexmap)
+     (car(cdr hexmap))
+     null))
+
+;Selector hexmap hex
+;Selecciona la parte hex de la lista hexmap
+;La diferencia entre el resto de variables es que esta variable es un string
+(define(Hex->hexmap hexmap)
+  (if(hexmap? hexmap)
+     (car(cdr(cdr hexmap)))
+     null))
+     
+;Selector hexmap D
+;Selecciona el ultimo elemento de la lista hexmap
+;Es un entero
+(define(D->hexmap hexmap)
+  (if(hexmap? hexmap)
+     (car(cdr(cdr(cdr hexmap))))
+     null))
+
+
 
 
 
