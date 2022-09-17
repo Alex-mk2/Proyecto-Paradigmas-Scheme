@@ -1,10 +1,4 @@
-
-
-;Funcion constructora de imagenes
-;Estructuras basadas en listas
-;Prerequisitos: Es necesario las otras funciones constructoras como bitmap, pixmap, hexmap}
-;Por lo cual, antes de generar la imagen, se deben generar las otras funciones
-
+#lang racket
 
 
 ;Definicion de(pixbit-d)
@@ -15,95 +9,49 @@
 ;El bit en si es un numero por lo cual se considera solamente como 0 y 1
 
 (define pixbit-d
-  (lambda(X Y Bit depth)
+  (lambda(X Y Bit Depth)
     (if(and(integer? X)
            (integer? Y)
-           (number? Bit)
-           (integer? depth))
-       (list X Y Bit depth)
+           (or(= Bit 0)(= Bit 1))
+           (integer? Depth))
+       (cons X (cons Y(cons Bit(cons Depth null))))
        null)
     )
   )
 
 ;Ejemplo uso
-;(pixbit-d 30 40 0 10)
+;(pixbit-d 30 40 1 10)
 
 
-;Pertenencia constructor pixbit-d
-;Verificar la pertenencia si es un pixbit-d
-;Dominio: bitmap
-;Recorrido: booleano
+;Selector(pixbit-d)
+;Seleccionar la coordenada X del elemento pixbit-d
+;Dominio: pixbit-d X elemento
+;Recorrido: pixbit-d
 
-(define pixbit-d?
-  (lambda(pixbit-d? pixbit-d)
-    (if(list? pixbit-d)
-       (if(and(integer? (car pixbit-d))
-              (integer?(car(cdr pixbit-d)))
-              (number? (car(cdr(cdr pixbit-d))))
-              (integer?(car(cdr(cdr(cdr pixbit-d)))))
-             )
-            #t
-            #f
-          )
-         #f
-       )
-    )
-  )
-
-;Selector bitmap (pixbit-d)
-;Seleccionar la coordenada X del elemento bitmap
-
-(define(bitmap->CoordenadaX pixbit-d)
-  (if(pixbit-d? pixbit-d)
-     (car pixbit-d)
-     null))
+(define Obtener-X
+  (lambda(lista)
+    (car lista)))
 
 ;Selector(pixbit-d)
 ;Seleccionar la coordenada Y del elemento pixbit-d
 
-(define(bitmap->CoordenadaY pixbit-d)
-  (if(pixbit-d? pixbit-d)
-     (car(cdr pixbit-d))
-     null))
+(define Obtener-Y
+  (lambda(lista)
+    (car(cdr lista))))
 
 ;Selector pixbit-d
 ;Seleccionar el bit del elemento pixbit-d
 
-(define(bitmap->Bit pixbit-d)
-  (if(pixbit-d? pixbit-d)
-     (car(cdr(cdr pixbit-d)))
-     null))
+(define Obtener-Bit
+  (lambda(lista)
+    (car(cdr(cdr lista)))))
 
 ;Selector pixbit-d
 ;Seleccionar el depth del elemento pixbit-d
 
-(define(bitmap->depth pixbit-d)
-  (if(pixbit-d? pixbit-d)
-     (car(cdr(cdr(cdr pixbit-d))))
-     null))
-
-;Modificadores pixbit-d
-;Apartado de funciones modificadoras para pixbit-d
-;En este caso es necesario uan funcion que nos indique el bit sea 0 o 1
-;Dominio: Elemento Bit
-;Recorrido: Booleano
-
-(define Bit?
-  (lambda(Bit)
-    (cond
-      [(pixbit-d? (car(cdr(cdr Bit))))] ;Lo que se realiza aqui es encontrar en la lista donde se almaceno el elemento bit
-      [(= Bit 1) #f]
-      [(= Bit 0) #t]
-      [else "No es bit"])))
-
-;Funcion para 
-
-
-
-
-
-
-
+(define Obtener-Depth
+  (lambda(lista)
+    (car(cdr(cdr(cdr lista))))))
 
 
 
@@ -117,160 +65,89 @@
   (lambda(X Y R G B D)
     (if(and(integer? X)
            (integer? Y)
-           (integer? R)
-           (integer? G)
-           (integer? B)
+           (<= R 255)(>= R 0)
+           (<= G 255)(>= G 0)
+           (<= B 255)(>= B 0)
            (integer? D))
-       (list X Y R G B D)
+       (cons X(cons Y(cons R(cons G(cons B(cons D null))))))
        null)
     )
   )
+
 ;Ejemplo uso
 ;(pixrgb-d 0 0 0 0 0 0)
 
-;Pertenencia pixrgb-d
-;Constructor pixrgb-d
-;Dominio: pixrgb-d
-;Recorrido: booleano
-;Recursión: No se usa
-
-(define pixrgb-d?
-  (lambda(pixrgb-d? pixrgb-d)
-    (if(list? pixrgb-d)
-       (if(and(integer? (car pixrgb-d))
-              (integer? (car(cdr pixrgb-d)))
-              (integer? (car(cdr(cdr pixrgb-d))))
-              (integer? (car(cdr(cdr(cdr pixrgb-d)))))
-              (integer? (car(cdr(cdr(cdr(cdr pixrgb-d))))))
-              (integer? (car(cdr(cdr(cdr(cdr(cdr pixrgb-d)))))))
-              )
-          #t
-          #f
-          )
-       #f
-       )
-    )
-  )
-
 ;Selectores pixmap-d 
-
-;Selecciona la coordenada X del elemento pixrgb-d
-;En este caso toma el primer elememento del constructor del pixrgb-d
-(define(CoordenadaX->pixmap pixrgb-d)
-  (if(pixrgb-d? pixrgb-d)
-     (car pixrgb-d)
-     null)
-  )
-
-;Selector coordenada Y del elemento pixmap
-;En este caso toma el segundo elemento de la coordenada pixrgb-d
-(define(CoordenadaY->pixmap pixrgb-d)
-  (if(pixrgb-d? pixrgb-d)
-     (car (cdr pixrgb-d))
-     null)
-  )
-
+;No es necesario realizar los selectores para las coordenadas, ya que fueron creados
 ;Selector R, elemento color (Puede tomar valor entre 0 hasta 255)
 ;Selecciona el tercer elemento de la lista pixrgb-d
-(define(ColorR->pixmap pixrgb-d)
-  (if(pixrgb-d? pixrgb-d)
-     (car(cdr(cdr pixrgb-d)))
-     null)
-  )
+(define Obtener-R
+  (lambda(lista)
+    (car(cdr(cdr lista)))))
 
 ;Selector G, elemento color (Nuevamente puede tomar valores entre 0 y 255)
 ;Selecciona el cuarto elemento de la lista pixbit-d
-(define (ColorG->pixmap pixrgb-d)
-  (if(pixrgb-d? pixrgb-d)
-     (car(cdr(cdr(cdr pixrgb-d))))
-     null))
+(define Obtener-G
+  (lambda(lista)
+    (car(cdr(cdr(cdr lista))))))
 
 ;Selector B, elemento color (0-255)
 ;Selecciona el quinto elemento de la lista pixbit-d
-(define(ColorB->pixmap pixrgb-d)
-  (if(pixrgb-d? pixrgb-d)
-     (car(cdr(cdr(cdr(cdr pixrgb-d)))))
-     null))
+(define Obtener-B
+  (lambda(lista)
+    (car(cdr(cdr(cdr(cdr lista)))))))
 
 ;Selector D, un valor entero cualquiera
 ;Selecciona el ultimo elemento de la lista pixbit-d
-(define(D->pixmap pixrgb-d)
-  (if(pixrgb-d? pixrgb-d)
-     (car(cdr(cdr(cdr(cdr(cdr pixrgb-d))))))
-     null)
-  )
-
+(define Obtener-D
+  (lambda(lista)
+    (car(cdr(cdr(cdr(cdr(cdr lista))))))))
 
 ;Constructor(pixhex-d)
 ;Dominio: W(int) X Z(int) X hex(string) X d(int)
-;Recorrido: Hexmap
+;Recorrido: pixhex-d
 ;Recursión: No se usa
-
 (define pixhex-d
-  (lambda(X Y hex d)
+  (lambda(X Y Hex D)
     (if(and(integer? X)
            (integer? Y)
-           (string? hex)
-           (integer? d))
-       (list X Y hex d)
-       null)
-    )
-  )
+           (string? Hex)
+           (integer? D))
+       (cons X(cons Y(cons Hex(cons D null))))
+       null)))
+
 ;Ejemplo uso
-;(hexmap-d 10 20 "Rojo" 0)
+;(pixhex-d 10 20 "Rojo" 0)
 
-;Pertenencia hexmap
-(define pixhex-d?
-  (lambda(pixhex-d? hexmap-d)
-    (if(list? hexmap-d)
-       (if(and(integer? (car hexmap-d))
-              (integer? (car(cdr hexmap-d)))
-              (integer? (car(cdr(cdr hexmap-d))))
-              (integer? (car(cdr(cdr(cdr hexmap-d)))))
 
-              )
-             #t
-             #f
-          )
-         #f
-       )
-    )
-  )
-
-;Selectores hexmap o hexmap-d
+;Selectores pixhex-d
 ;Selecciona los elementos de la lista pixhex-d
 ;En este caso se tienen que tomar todos los elementos de esa lista
-;Aquí se comienza tomando la coordenada X de la lista pixhex-d
-(define(CoordenadaX->hexmap pixhex-d)
-  (if(pixhex-d? pixhex-d)
-     (car pixhex-d)
-     null))
+;Como se tienen el resto de elementos, solo se deben tomar los elementos hex y D
+(define Obtener-Hex
+  (lambda(lista)
+    (car(cdr(cdr lista)))))
 
-;Selector hexmap coordenada Y
-;Selecciona el segundo elemento de la lista pixhex-d
-(define(CoordenadaY->hexmap pixhex-d)
-  (if(pixhex-d? pixhex-d)
-     (car(cdr pixhex-d))
-     null))
+;Selector pixhex-d
+;En este caso se hace seleccion del elemento D de la lista hex
+;Debido a que las listas de elementos entre los tres tipos de pix son diferentes
 
-;Selector hex
-;Selecciona la parte hex de la lista pixhex-d
-;La diferencia entre el resto de variables es que esta variable es un string
-(define(Hex->hexmap pixhex-d)
-  (if(pixhex-d? pixhex-d)
-     (car(cdr(cdr pixhex-d)))
-     null))
-
-;Selector D
-;Selecciona el ultimo elemento de la lista pixhex-d
-;Es un entero
-(define(D->hexmap pixhex-d)
-  (if(pixhex-d? pixhex-d)
-     (car(cdr(cdr(cdr pixhex-d))))
-     null))
-
+(define Obtener-D-Hex
+  (lambda(lista)
+    (car(cdr(cdr(cdr lista))))))
 
 ;Constructor imagen
 ;Funcion constructora de la imagen
 ;Se deben tener los otros constructores para generar la imagen
-;Dominio: 
+;Dominio: Alto X Ancho X pixbit-d X pixrgb-d X pixhex-d
+;Recorrido: Imagen
+;Una vez obtenidos los contructores de los otros apartados, se debe construir el constructor central imagen
+
+(define imagen
+  (lambda(Alto Ancho . ConstructoresPrev)
+    (cons Alto(cons Ancho(cons ConstructoresPrev null)))))
+
+;La idea de esta funcion es utilizar los constructores generados
+;Como funciones de n variable
+;Ejemplo uso
+;(imagen 2 2(pixbit-d 0 0 1 100)(pixbit-d 0 0 1 20)(pixbit-d 0 0 1 70)(pixbit-d 0 0 0 0))
