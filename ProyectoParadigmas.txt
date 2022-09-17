@@ -151,3 +151,27 @@
 ;Como funciones de n variable
 ;Ejemplo uso
 ;(imagen 2 2(pixbit-d 0 0 1 100)(pixbit-d 0 0 1 20)(pixbit-d 0 0 1 70)(pixbit-d 0 0 0 0))
+;(imagen 2 2 (pixhex-d 0 0 "rojo" 100)(pixhex-d 0 0 "negro" 20)(pixhex-d 0 0 "blanco" 70)(pixhex-d 0 0 "azul" 0))
+
+
+;Selectores imagen
+;Se tienen los siguiente selectores para los elementos de la imagen
+;Se selecciona el alto de la imagen
+(define Obtener-Alto
+  (lambda(imagen)
+    (car imagen)))
+
+;Selector ancho imagen
+;Se selecciona el ancho de la imagen
+(define Obtener-Ancho
+  (lambda(imagen)
+    (car(cdr imagen))))
+
+;Selector para los constructores previamente hechos
+;Selecciona el ultimo elemento, es decir, las listas con los otros constructores
+(define Obtener-Listas-Pixeles
+  (lambda(imagen)
+    (car(cdr(cdr imagen)))))
+
+;Selectores creados
+
