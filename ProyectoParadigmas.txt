@@ -54,6 +54,24 @@
     (car(cdr(cdr(cdr lista))))))
 
 
+;Pertenencia pixbit-d
+;Se genera la pertenencia para el constructor pixbit-d
+;Dominio: pixbit-d
+;Recorrido: Booleano
+;Recursion: No se usa
+
+(define pixbit-d?
+  (lambda(Posiblepix)
+    (cond
+      [(=(length Posiblepix)4)#t]
+      [(integer? (Obtener-X Posiblepix))#t]
+      [(integer? (Obtener-Y Posiblepix))#t]
+      [(or(=(Obtener-Bit Posiblepix)0)(=(Obtener-Bit Posiblepix)1))#t]
+      [(integer? (Obtener-Depth))#t]
+      [else #f])))
+
+
+
 
 ;TDA pixrgb-d (pixmap)
 ;Constructor para generar un pixbit
@@ -103,6 +121,24 @@
   (lambda(lista)
     (car(cdr(cdr(cdr(cdr(cdr lista))))))))
 
+;Pertenencia pixrgb-d
+;Verifica la partenencia para dicho constructor
+;Dominio: pixrgb-d
+;Recorrido: booleano
+;Recursión: No se usa
+
+(define pixrgb-d?
+  (lambda(Posiblepix)
+    (cond
+      [(=(length Posiblepix)6)#t]
+      [(integer? (Obtener-X Posiblepix))#t]
+      [(integer? (Obtener-Y Posiblepix))#t]
+      [(and(<=(Obtener-R Posiblepix)255)(>= Obtener-R Posiblepix)0)#t]
+      [(and(<=(Obtener-G Posiblepix)255)(>= Obtener-R Posiblepix)0)#t]
+      [(and(<=(Obtener-B Posiblepix)255)(>= Obtener-B Posiblepix)0)#t]
+      [(integer? (Obtener-D Posiblepix))#t]
+      [else #f])))
+
 ;Constructor(pixhex-d)
 ;Dominio: W(int) X Z(int) X hex(string) X d(int)
 ;Recorrido: pixhex-d
@@ -135,6 +171,24 @@
 (define Obtener-D-Hex
   (lambda(lista)
     (car(cdr(cdr(cdr lista))))))
+
+
+;Pertenencia pixhex-d
+;Aqui se construye la pertenencia de los elementos de tipo pixhex-d
+;Dominio: pixhex-d
+;Recorrido: Booleano
+;Recursion: No se usa
+
+(define pixhex-d?
+  (lambda(Posiblepix)
+    (cond
+      [(=(length Posiblepix)4)#t]
+      [(integer? (Obtener-X Posiblepix))#t]
+      [(integer? (Obtener-Y Posiblepix))#t]
+      [(string? (Obtener-Hex Posiblepix))#t]
+      [(integer? (Obtener-D-Hex Posiblepix))#t]
+      [else #f])))
+
 
 ;Constructor imagen
 ;Funcion constructora de la imagen
