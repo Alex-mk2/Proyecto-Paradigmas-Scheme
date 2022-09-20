@@ -229,3 +229,95 @@
 
 ;Selectores creados
 
+;Pertenencia imagen
+;Se diseñan las pertenencias en cuanto al constructor imagen a diseñar, se usa lo previamente
+;Dominio: Imagen
+;Recorrido: Booleano
+;Recursion: No se usa
+;Se construye la pertenencia para un bitmap?
+
+
+(define bitmap?
+  (lambda(imagen)
+    (cond
+      ([(list? imagen)#t]
+       [(pixbit-d? (Obtener-Listas-Pixel imagen))#t]
+       [#f]))))
+
+;Pertenencia pixmap
+;Se construye a base de los pixrgb-d?
+;Dominio: imagen
+;Recorrido: booleano
+;Recursion: No se usa
+
+(define pixmap?
+  (lambda(imagen)
+    (cond
+      ([(list? imagen)#t]
+       [pixrgb-d? (Obtener-Listas-Pixel imagen)#t]
+       [#f]))))
+
+
+;Pertenencia hexmap
+;Se construye a partir de los pixhex-d?
+;Dominio: imagen
+;Recorrido: booleano
+;Recursion: No se usa
+
+(define hexmap?
+  (lambda(imagen)
+    (cond
+      ([list? imagen]#t
+       [pixhex-d? (Obtener-Listas-Pixel)#t]
+       [#f]))))
+
+
+
+;Funcion para verificar si se puede comprimir una imagen
+;Dominio: imagen
+;Recorrido: booleano
+;Recursion: No se usa
+
+(define comprimir?
+  (lambda(imagen)
+    (cond
+      ([(<=(length(Obtener-Listas-Pixel imagen)(*(Obtener-Ancho imagen)(Obtener-Alto imagen))))#t]
+       [#f]))))
+
+;Otras funciones que pueden ser de utilidad
+
+;Funcion que permite reducir elementos en una lista
+;Dominio: Lista X contador
+;Recorrido: Lista reducida
+;Recursion: Natural
+
+(define reducir
+  (lambda (L fRedux cont)
+    (if (null? L) cont
+        (reducir (cdr L) fRedux (fRedux (car L) cont)))))
+
+;Funcion que permite realizar un mapeo a los elementos de una lista
+;Dominio: Lista X elementos
+;Recorrido: Lista
+;Recursion: Natural
+
+(define (mi-map funcion lista)
+  (cond
+    [(null? lista) null]
+    [else
+     (cons (funcion (car lista))
+           (mi-map funcion (cdr lista)))]))
+
+;Funcion que permite filtrar elementos especificos de una lista
+;Dominio: Lista X pred 
+;Recorrido: Lista
+;Recursion: Natural
+
+(define (mi-filtro pred lista)
+  (cond
+    [(null? lista) null]
+    [(pred (car lista))
+     (cons (car lista) (mi-filtro pred (cdr lista)))]
+    [else
+     (mi-filtro pred (cdr lista))]))
+
