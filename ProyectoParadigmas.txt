@@ -54,6 +54,7 @@
     (car(cdr(cdr(cdr lista))))))
 
 
+
 ;Pertenencia pixbit-d
 ;Se genera la pertenencia para el constructor pixbit-d
 ;Dominio: pixbit-d
@@ -69,8 +70,6 @@
       [(or(=(Obtener-Bit Posiblepix)0)(=(Obtener-Bit Posiblepix)1))#t]
       [(integer? (Obtener-Depth))#t]
       [else #f])))
-
-
 
 
 ;TDA pixrgb-d (pixmap)
@@ -99,6 +98,7 @@
 ;No es necesario realizar los selectores para las coordenadas, ya que fueron creados
 ;Selector R, elemento color (Puede tomar valor entre 0 hasta 255)
 ;Selecciona el tercer elemento de la lista pixrgb-d
+
 (define Obtener-R
   (lambda(lista)
     (car(cdr(cdr lista)))))
@@ -121,23 +121,29 @@
   (lambda(lista)
     (car(cdr(cdr(cdr(cdr(cdr lista))))))))
 
+
 ;Pertenencia pixrgb-d
 ;Verifica la partenencia para dicho constructor
 ;Dominio: pixrgb-d
 ;Recorrido: booleano
 ;Recursión: No se usa
-
-(define pixrgb-d?
-  (lambda(Posiblepix)
-    (cond
-      [(=(length Posiblepix)6)#t]
-      [(integer? (Obtener-X Posiblepix))#t]
-      [(integer? (Obtener-Y Posiblepix))#t]
-      [(and(<=(Obtener-R Posiblepix)255)(>= Obtener-R Posiblepix)0)#t]
-      [(and(<=(Obtener-G Posiblepix)255)(>= Obtener-R Posiblepix)0)#t]
-      [(and(<=(Obtener-B Posiblepix)255)(>= Obtener-B Posiblepix)0)#t]
-      [(integer? (Obtener-D Posiblepix))#t]
-      [else #f])))
+(define (pixrgb-d? Posiblepix)
+  (if (list? Posiblepix)
+      (if (= (length Posiblepix) 6)
+          (if (and (integer? (Obtener-X Posiblepix))
+                   (integer? (Obtener-Y Posiblepix))
+                   (((>=(Obtener-R Posiblepix)0)(<= Obtener-R Posiblepix)255))
+                   (((>=(Obtener-G Posiblepix)0)(<= Obtener-R Posiblepix)255))
+                   (((>=(Obtener-B Posiblepix)0)(<= Obtener-B Posiblepix)255))
+                   ((integer? (Obtener-D Posiblepix))))
+              #t
+              #f
+              )
+          #f
+          )
+      #f
+      )
+  )
 
 ;Constructor(pixhex-d)
 ;Dominio: W(int) X Z(int) X hex(string) X d(int)
@@ -179,16 +185,21 @@
 ;Recorrido: Booleano
 ;Recursion: No se usa
 
-(define pixhex-d?
-  (lambda(Posiblepix)
-    (cond
-      [(=(length Posiblepix)4)#t]
-      [(integer? (Obtener-X Posiblepix))#t]
-      [(integer? (Obtener-Y Posiblepix))#t]
-      [(string? (Obtener-Hex Posiblepix))#t]
-      [(integer? (Obtener-D-Hex Posiblepix))#t]
-      [else #f])))
-
+(define (pixhex-d? Posiblepix)
+  (if (list? Posiblepix)
+      (if (= (length Posiblepix) 4)
+          (if (and (integer? (Obtener-X Posiblepix))
+                   (integer? (Obtener-Y Posiblepix))
+                   (string? (Obtener-Hex Posiblepix))
+                   (integer? (Obtener-D-Hex Posiblepix)))
+              #t
+              #f
+              )
+          #f
+          )
+      #f
+      )
+  )
 
 ;Constructor imagen
 ;Funcion constructora de la imagen
@@ -206,7 +217,7 @@
 ;Ejemplo uso
 ;(imagen 2 2(pixbit-d 0 0 1 100)(pixbit-d 0 0 1 20)(pixbit-d 0 0 1 70)(pixbit-d 0 0 0 0))
 ;(imagen 2 2 (pixhex-d 0 0 "rojo" 100)(pixhex-d 0 0 "negro" 20)(pixhex-d 0 0 "blanco" 70)(pixhex-d 0 0 "azul" 0))
-
+;(imagen 2 2 (pixrgb-d 0 0 0 0 0 0) (pixrgb-d 1 1 1 1 1 1) (pixrgb-d 0 0 0 255 255 10) (pixrgb-d 0 1 1 1 0 0))
 
 ;Selectores imagen
 ;Se tienen los siguiente selectores para los elementos de la imagen
@@ -223,11 +234,9 @@
 
 ;Selector para los constructores previamente hechos
 ;Selecciona el ultimo elemento, es decir, las listas con los otros constructores
-(define Obtener-Listas-Pixeles
+(define Obtener-Listas-Pixel
   (lambda(imagen)
     (car(cdr(cdr imagen)))))
-
-;Selectores creados
 
 ;Pertenencia imagen
 ;Se diseñan las pertenencias en cuanto al constructor imagen a diseñar, se usa lo previamente
@@ -236,13 +245,12 @@
 ;Recursion: No se usa
 ;Se construye la pertenencia para un bitmap?
 
-
 (define bitmap?
   (lambda(imagen)
-    (cond
-      ([(list? imagen)#t]
-       [(pixbit-d? (Obtener-Listas-Pixel imagen))#t]
-       [#f]))))
+    (pixbit-d? (Obtener-Listas-Pixel imagen))))
+
+;Ejemplo uso:
+;(bitmap? (imagen 2 2 (pixbit-d 0 0 1 10)(pixbit-d 0 1 0 20)(pixbit-d 1 0 0 30)(pixbit-d 1 1 1 4))) devuelve #t
 
 ;Pertenencia pixmap
 ;Se construye a base de los pixrgb-d?
@@ -252,10 +260,10 @@
 
 (define pixmap?
   (lambda(imagen)
-    (cond
-      ([(list? imagen)#t]
-       [pixrgb-d? (Obtener-Listas-Pixel imagen)#t]
-       [#f]))))
+    (pixrgb-d? (Obtener-Listas-Pixel imagen))))
+
+;Ejemplo uso:
+;(pixmap? (imagen 2 2 (pixbit-d 0 0 1 10)(pixbit-d 0 1 0 20)(pixbit-d 1 0 0 30)(pixbit-d 1 1 1 4))) devuelve #f
 
 
 ;Pertenencia hexmap
@@ -266,11 +274,10 @@
 
 (define hexmap?
   (lambda(imagen)
-    (cond
-      ([list? imagen]#t
-       [pixhex-d? (Obtener-Listas-Pixel)#t]
-       [#f]))))
+    (pixhex-d? (Obtener-Listas-Pixel imagen))))
 
+;Ejemplo uso
+;(hexmap? (imagen 2 2 (pixbit-d 0 0 1 100)(pixbit-d 0 0 1 20)(pixbit-d 0 0 1 70)(pixbit-d 0 0 0 0))) devuelve #f
 
 
 ;Funcion para verificar si se puede comprimir una imagen
@@ -280,9 +287,29 @@
 
 (define comprimir?
   (lambda(imagen)
-    (cond
-      ([(<=(length(Obtener-Listas-Pixel imagen)(*(Obtener-Ancho imagen)(Obtener-Alto imagen))))#t]
-       [#f]))))
+    (if(<(length(Obtener-Listas-Pixel imagen))(*(Obtener-Ancho imagen)(Obtener-Alto imagen)))
+       #t
+       #f)
+    )
+  )
+
+;Ejemplo uso:
+;(comprimir? (imagen 2 2 (pixbit-d  0 0 1 10) (pixbit-d  0 1 0 20) (pixbit-d 1 0 0 30) (pixbit-d 1 1 1 4))) devuelve #f
+
+
+;Funcion flipH
+;Para realizar esta funcion es necesario el constructor imagen
+;Dominio: imagen
+;Recorrido: imagen
+;Recursion: natural
+
+(define flipH
+  (lambda(imagen pixel-Inver)
+    (if(null? imagen)
+       pixel-Inver ;Si la imagen es nula, devuelve solamente pixel invertido
+       ((flipH)))))
+
+
 
 ;Otras funciones que pueden ser de utilidad
 
@@ -320,4 +347,3 @@
      (cons (car lista) (mi-filtro pred (cdr lista)))]
     [else
      (mi-filtro pred (cdr lista))]))
-
