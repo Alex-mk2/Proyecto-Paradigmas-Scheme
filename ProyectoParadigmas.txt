@@ -302,31 +302,46 @@
 ;Dominio: imagen
 ;Recorrido: imagen
 ;Recursion: natural
-
 (define flipH
-  (lambda(imagen pixel-Inver)
-    (if(null? imagen)
-       pixel-Inver ;Si la imagen es nula, devuelve solamente pixel invertido
-       ((flipH)))))
+  (lambda(imagen Pixel)
+    (Obtener-Alto imagen)
+    (Obtener-Ancho imagen)
+    (my-map-modificado Obtener-Listas-Pixel imagen)))
+
+
+
 
 
 
 ;Otras funciones que pueden ser de utilidad
+
+
+;Funcion para dejar una lista de una sola dimension
+;Dominio: Lista X elemento
+;Recorrido: Lista de una dimension
+
+(define (flatten x)
+  (cond ((null? x) '())
+        ((pair? x) (append (flatten (car x)) (flatten (cdr x))))
+        (else (list x))))
 
 ;Funcion que permite reducir elementos en una lista
 ;Dominio: Lista X contador
 ;Recorrido: Lista reducida
 ;Recursion: Natural
 
+
 (define reducir
   (lambda (L fRedux cont)
     (if (null? L) cont
         (reducir (cdr L) fRedux (fRedux (car L) cont)))))
 
+
 ;Funcion que permite realizar un mapeo a los elementos de una lista
 ;Dominio: Lista X elementos
 ;Recorrido: Lista
 ;Recursion: Natural
+
 
 (define (mi-map funcion lista)
   (cond
@@ -335,10 +350,12 @@
      (cons (funcion (car lista))
            (mi-map funcion (cdr lista)))]))
 
+
 ;Funcion que permite filtrar elementos especificos de una lista
 ;Dominio: Lista X pred 
 ;Recorrido: Lista
 ;Recursion: Natural
+
 
 (define (mi-filtro pred lista)
   (cond
@@ -347,3 +364,36 @@
      (cons (car lista) (mi-filtro pred (cdr lista)))]
     [else
      (mi-filtro pred (cdr lista))]))
+
+
+;Funcion para aplicar una operacion a los elementos en una lista (Una ligera modificacion de la funcion my-map) que está más arriba
+;Y que además fue facilitada por Gonzalo
+;Dominio: Lista X pred X Contador
+;Recorrido: Lista con elementos sumados
+
+(define my-map-modificado
+  (lambda(lista funcion contador)
+    (if(= contador 0)
+       lista
+       (my-map-modificado(append(cdr lista)(list(flatten(funcion(car lista))))(- contador 1))))))
+
+
+
+;Funcion para hacer la diferencia de restas 
+;Dominio: numero X numero
+;Recorrido: numero
+;Recursion no se usa
+
+(define dif-Puntos
+  (lambda(x1 x2)
+    (abs(+(- x2 x1)(- x2 x1)))))
+
+;Codigo para calcular la distancia
+;Ejemplo uso:
+;(dif-Puntos 10 5)
+
+
+
+
+
+
