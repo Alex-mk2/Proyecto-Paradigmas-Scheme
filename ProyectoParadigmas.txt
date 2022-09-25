@@ -280,12 +280,12 @@
 ;(hexmap? (imagen 2 2 (pixbit-d 0 0 1 100)(pixbit-d 0 0 1 20)(pixbit-d 0 0 1 70)(pixbit-d 0 0 0 0))) devuelve #f
 
 
-;Funcion para verificar si se puede comprimir una imagen
+;Funcion para verificar si se puede comprimir una imagen 
 ;Dominio: imagen
 ;Recorrido: booleano
 ;Recursion: No se usa
 
-(define comprimir?
+(define compress?
   (lambda(imagen)
     (if(<(length(Obtener-Listas-Pixel imagen))(*(Obtener-Ancho imagen)(Obtener-Alto imagen)))
        #t
@@ -294,28 +294,80 @@
   )
 
 ;Ejemplo uso:
-;(comprimir? (imagen 2 2 (pixbit-d  0 0 1 10) (pixbit-d  0 1 0 20) (pixbit-d 1 0 0 30) (pixbit-d 1 1 1 4))) devuelve #f
+;(compress? (imagen 2 2 (pixbit-d  0 0 1 10) (pixbit-d  0 1 0 20) (pixbit-d 1 0 0 30) (pixbit-d 1 1 1 4))) ;Devuelve #f
 
 
-;Funcion flipH
+;Funcion auxiliar para proceder con flipH y para reducir la carga de dicha funcion
+;Dominio: imagen X VoltearPixel
+;Recorrido: imagen
+;Recursion: no se usa
+
+(define AuxFlipH
+  (lambda(imagen VoltearPixel)
+    (cond
+      ([(pixbit-d? VoltearPixel(pixbit-d(Obtener-X VoltearPixel(-(-(Obtener-Ancho imagen)1)(Obtener-Y VoltearPixel(Obtener-Bit VoltearPixel)(Obtener-Depth VoltearPixel))))))]
+       [(pixrgb-d? VoltearPixel)(pixrgb-d(Obtener-X VoltearPixel(-(-(Obtener-Ancho imagen)1)(Obtener-Y VoltearPixel)(Obtener-R VoltearPixel)(Obtener-G VoltearPixel)(Obtener-B VoltearPixel)(Obtener-D VoltearPixel))))]
+       [(pixhex-d? VoltearPixel(pixhex-d(Obtener-X VoltearPixel(-(-(Obtener-Ancho imagen)1)(Obtener-Y VoltearPixel)(Obtener-Hex VoltearPixel)(Obtener-D-Hex VoltearPixel)))))]
+       ))))
+
+
+;Funcion flipH, funcion que invierte una imagen de manera horizontal 
 ;Para realizar esta funcion es necesario el constructor imagen
+;Dominio: Imagen
+;Recorrido: Imagen
+;Recursion: natural
+
+(define flipH
+  (lambda(imagen)
+    (lambda(Pixel)
+    (Obtener-Alto imagen * Obtener-Ancho imagen)(my-map-modificado(Obtener-Listas-Pixel imagen(AuxFlipH(imagen Pixel)))))))
+
+;Ejemplo uso:
+;(flipH(imagen 2 2(pixbit-d  0 0 1 10)(pixbit-d  0 1 0 20)(pixbit-d 1 0 0 30)(pixbit-d 1 1 1 4)))
+
+
+;Funcion AuxflipV, funcion que ayuda a la funcion flipV
 ;Dominio: imagen
 ;Recorrido: imagen
+;Recursion: no se usa
+
+(define AuxFlipV
+  (lambda(imagen VoltearPixel)
+    (cond
+      ([(pixbit-d? VoltearPixel(pixbit-d(Obtener-Y VoltearPixel(-(-(Obtener-Alto imagen)1(Obtener-X VoltearPixel)(Obtener-Bit VoltearPixel)(Obtener-Depth VoltearPixel))))))]
+       [(pixrgb-d? VoltearPixel(pixrgb-d(Obtener-Y VoltearPixel(-(-(Obtener-Alto imagen)1(Obtener-X VoltearPixel)(Obtener-R VoltearPixel(Obtener-G VoltearPixel)(Obtener-B VoltearPixel)(Obtener-D VoltearPixel)))))))]
+       [(pixhex-d? VoltearPixel(pixhex-d(Obtener-Y VoltearPixel(-(-(Obtener-Alto imagen)1(Obtener-X VoltearPixel)(Obtener-Hex VoltearPixel(Obtener-D-Hex VoltearPixel)))))))]))))
+
+
+;Funcion flipV, funcion que invierte una imagen vertical
+;Dominio: imagen
+;Recorrido: imagen
+;Recorsion: natural
+
+(define flipV
+  (lambda(imagen)
+    (lambda(Pixel)
+      (Obtener-Alto imagen * Obtener-Ancho imagen(my-map-modificado(Obtener-Listas-Pixel imagen(AuxFlipV(imagen Pixel))))))))
+
+;Ejemplo uso:
+;(flipV (imagen 2 2 (pixbit-d  0 0 1 10) (pixbit-d  0 1 0 20) (pixbit-d 1 0 0 30) (pixbit-d 1 1 1 4)))
+
+;Funcion crop, funcion que permite recortar una imagen en un par de puntos
+;Dominio: imagen X x1(int) X x2(int) X y1(int) X y2(int)
+;Recorrido: imagen
 ;Recursion: natural
-(define flipH
-  (lambda(imagen Pixel)
-    (Obtener-Alto imagen)
-    (Obtener-Ancho imagen)
-    (my-map-modificado Obtener-Listas-Pixel imagen)))
 
-
+(define Crop
+  (lambda(imagen X1 X2 Y1 Y2)
+    (lambda(Pixel)
+      (dif-Puntos X1 X2 Y1 Y2)(mi-filtro Pixel)
+      (cond
+        ))))
 
 
 
 
 ;Otras funciones que pueden ser de utilidad
-
-
 ;Funcion para dejar una lista de una sola dimension
 ;Dominio: Lista X elemento
 ;Recorrido: Lista de una dimension
@@ -330,7 +382,6 @@
 ;Recorrido: Lista reducida
 ;Recursion: Natural
 
-
 (define reducir
   (lambda (L fRedux cont)
     (if (null? L) cont
@@ -341,7 +392,6 @@
 ;Dominio: Lista X elementos
 ;Recorrido: Lista
 ;Recursion: Natural
-
 
 (define (mi-map funcion lista)
   (cond
@@ -356,7 +406,6 @@
 ;Recorrido: Lista
 ;Recursion: Natural
 
-
 (define (mi-filtro pred lista)
   (cond
     [(null? lista) null]
@@ -367,9 +416,10 @@
 
 
 ;Funcion para aplicar una operacion a los elementos en una lista (Una ligera modificacion de la funcion my-map) que está más arriba
-;Y que además fue facilitada por Gonzalo
+;Y que además fue facilitada por el profe Gonzalo
 ;Dominio: Lista X pred X Contador
 ;Recorrido: Lista con elementos sumados
+;Recursion: natural
 
 (define my-map-modificado
   (lambda(lista funcion contador)
@@ -385,12 +435,31 @@
 ;Recursion no se usa
 
 (define dif-Puntos
-  (lambda(x1 x2)
-    (abs(+(- x2 x1)(- x2 x1)))))
+  (lambda(x1 x2 y1 y2)
+    (abs(+(- x2 x1)(- y2 y1)))))
 
 ;Codigo para calcular la distancia
 ;Ejemplo uso:
-;(dif-Puntos 10 5)
+;(dif-Puntos 2 4 2 1)
+
+
+;Obtener len de una lista de forma recursiva natural
+;Dominio: Lista
+;Recorrido: Largo lista
+;Funcion facilitada por el profe Gonzalo
+;Recursion: natural
+
+(define (length-1 list)
+  (if (null? list)
+      0
+      (+ 1
+         (length-1 (cdr list))))) 
+
+
+
+
+
+
 
 
 
