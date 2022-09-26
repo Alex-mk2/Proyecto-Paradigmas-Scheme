@@ -357,14 +357,19 @@
 ;Recorrido: imagen
 ;Recursion: natural
 
-(define Crop
+(define crop
   (lambda(imagen X1 X2 Y1 Y2)
     (lambda(Pixel)
-      (dif-Puntos X1 X2 Y1 Y2)(mi-filtro Pixel)
+      (mi-filtro imagen Pixel)
       (cond
-        ))))
+        ([(>= Obtener-X Pixel(min X1 X2))(<= (Obtener-Y Pixel(max X1 X2)))#t]
+         [(>= Obtener-Y Pixel(min Y1 Y2))(<=(Obtener-Y Pixel(max Y1 Y2)))#t]
+         [(>= distancia(X1 X2 Y1 Y2))#t]
+         [(>= dif-Puntos(X1 X2 Y1 Y2))#t]
+         [(#f)])))))
 
-
+;Ejemplo uso
+;(crop imagen 10 10 40 40)
 
 
 ;Otras funciones que pueden ser de utilidad
@@ -453,7 +458,35 @@
   (if (null? list)
       0
       (+ 1
-         (length-1 (cdr list))))) 
+         (length-1 (cdr list)))))
+
+;Funcion para obtener la distancia entre dos pares de puntos (X,Y)
+;Dominio: X(int) X Y(int)
+;Recorrido: int
+;Recursion: no se usa
+
+(define puntos
+  (lambda(X Y)
+    (sqrt(+(sqr X)(sqr Y)))))
+
+;Funcion para obtener la distancia (es un encapsulado de la funcion anterior)
+;Dominio: X1(int) X X2(int) X y1(int) X y2(int)
+;Recorrido: int
+;Recursion no se usa
+
+(define distancia
+  (lambda(X1 X2 Y1 Y2)
+    (puntos(- X1 X2)
+           (- Y1 Y2))))
+
+
+
+
+
+
+
+
+
 
 
 
