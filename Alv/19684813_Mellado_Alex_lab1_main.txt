@@ -1,0 +1,548 @@
+#lang racket
+
+;Nombre: Alex Mellado Gamboa
+;Asignatura: Paradigmas de programación
+;Laboratorio 1 Scheme.
+
+
+
+;Definicion de(pixbit-d)
+;Constructor pixbit-d
+;Dominio: W(int) X Z(int) X bit(constante 0 1) X depth (int)
+;Recorrido: pixbit-d
+;Recursion: No se usa
+;El bit en si es un numero por lo cual se considera solamente como 0 y 1
+
+(define pixbit-d
+  (lambda(X Y Bit Depth)
+    (if(and(integer? X)
+           (integer? Y)
+           (or(= Bit 0)(= Bit 1))
+           (integer? Depth))
+       (cons X (cons Y(cons Bit(cons Depth null))))
+       null)
+    )
+  )
+
+;Ejemplo uso
+;(pixbit-d 30 40 1 10)
+
+
+;Selector(pixbit-d)
+;Seleccionar la coordenada X del elemento pixbit-d
+;Dominio: pixbit-d X elemento
+;Recorrido: pixbit-d
+
+(define Obtener-X
+  (lambda(lista)
+    (car lista)))
+
+;Selector(pixbit-d)
+;Seleccionar la coordenada Y del elemento pixbit-d
+
+(define Obtener-Y
+  (lambda(lista)
+    (car(cdr lista))))
+
+;Selector pixbit-d
+;Seleccionar el bit del elemento pixbit-d
+
+(define Obtener-Bit
+  (lambda(lista)
+    (car(cdr(cdr lista)))))
+
+;Selector pixbit-d
+;Seleccionar el depth del elemento pixbit-d
+
+(define Obtener-Depth
+  (lambda(lista)
+    (car(cdr(cdr(cdr lista))))))
+
+
+
+;Pertenencia pixbit-d
+;Se genera la pertenencia para el constructor pixbit-d
+;Dominio: pixbit-d
+;Recorrido: Booleano
+;Recursion: No se usa
+
+(define pixbit-d?
+  (lambda(Posiblepix)
+    (cond
+      [(=(length Posiblepix)4)#t]
+      [(integer? (Obtener-X Posiblepix))#t]
+      [(integer? (Obtener-Y Posiblepix))#t]
+      [(or(=(Obtener-Bit Posiblepix)0)(=(Obtener-Bit Posiblepix)1))#t]
+      [(integer? (Obtener-Depth))#t]
+      [#f])))
+
+
+;TDA pixrgb-d (pixmap)
+;Constructor para generar un pixbit
+;Dominio: W(int) X Z(int) X R(C) X G(C) X B(C) X D(int)
+;Recorrido: Pixmap
+;Recursion: no se usa
+
+(define pixrgb-d
+  (lambda(X Y R G B D)
+    (if(and(integer? X)
+           (integer? Y)
+           (<= R 255)(>= R 0)
+           (<= G 255)(>= G 0)
+           (<= B 255)(>= B 0)
+           (integer? D))
+       (cons X(cons Y(cons R(cons G(cons B(cons D null))))))
+       null)
+    )
+  )
+
+;Ejemplo uso
+;(pixrgb-d 0 0 0 0 0 0)
+
+;Selectores pixmap-d 
+;No es necesario realizar los selectores para las coordenadas, ya que fueron creados
+;Selector R, elemento color (Puede tomar valor entre 0 hasta 255)
+;Selecciona el tercer elemento de la lista pixrgb-d
+
+(define Obtener-R
+  (lambda(lista)
+    (car(cdr(cdr lista)))))
+
+;Selector G, elemento color (Nuevamente puede tomar valores entre 0 y 255)
+;Selecciona el cuarto elemento de la lista pixbit-d
+(define Obtener-G
+  (lambda(lista)
+    (car(cdr(cdr(cdr lista))))))
+
+;Selector B, elemento color (0-255)
+;Selecciona el quinto elemento de la lista pixbit-d
+(define Obtener-B
+  (lambda(lista)
+    (car(cdr(cdr(cdr(cdr lista)))))))
+
+;Selector D, un valor entero cualquiera
+;Selecciona el ultimo elemento de la lista pixbit-d
+(define Obtener-D
+  (lambda(lista)
+    (car(cdr(cdr(cdr(cdr(cdr lista))))))))
+
+
+;Pertenencia pixrgb-d
+;Verifica la partenencia para dicho constructor
+;Dominio: pixrgb-d
+;Recorrido: booleano
+;Recursión: No se usa
+(define (pixrgb-d? Posiblepix)
+  (if (list? Posiblepix)
+      (if (= (length Posiblepix) 6)
+          (if (and (integer? (Obtener-X Posiblepix))
+                   (integer? (Obtener-Y Posiblepix))
+                   (((>=(Obtener-R Posiblepix)0)(<= Obtener-R Posiblepix)255))
+                   (((>=(Obtener-G Posiblepix)0)(<= Obtener-R Posiblepix)255))
+                   (((>=(Obtener-B Posiblepix)0)(<= Obtener-B Posiblepix)255))
+                   ((integer? (Obtener-D Posiblepix))))
+              #t
+              #f
+              )
+          #f
+          )
+      #f
+      )
+  )
+
+;Constructor(pixhex-d)
+;Dominio: W(int) X Z(int) X hex(string) X d(int)
+;Recorrido: pixhex-d
+;Recursión: No se usa
+(define pixhex-d
+  (lambda(X Y Hex D)
+    (if(and(integer? X)
+           (integer? Y)
+           (string? Hex)
+           (integer? D))
+       (cons X(cons Y(cons Hex(cons D null))))
+       null)))
+
+;Ejemplo uso
+;(pixhex-d 10 20 "Rojo" 0)
+;(pixhex-d 5  10 "#ffff"0)
+;(pixhex-d 2  4  "#ffA0"0)
+
+
+;Selectores pixhex-d
+;Selecciona los elementos de la lista pixhex-d
+;En este caso se tienen que tomar todos los elementos de esa lista
+;Como se tienen el resto de elementos, solo se deben tomar los elementos hex y D
+(define Obtener-Hex
+  (lambda(lista)
+    (car(cdr(cdr lista)))))
+
+;Selector pixhex-d
+;En este caso se hace seleccion del elemento D de la lista hex
+;Debido a que las listas de elementos entre los tres tipos de pix son diferentes
+
+(define Obtener-D-Hex
+  (lambda(lista)
+    (car(cdr(cdr(cdr lista))))))
+
+
+;Pertenencia pixhex-d
+;Aqui se construye la pertenencia de los elementos de tipo pixhex-d
+;Dominio: pixhex-d
+;Recorrido: Booleano
+;Recursion: No se usa
+
+(define (pixhex-d? Posiblepix)
+  (if (list? Posiblepix)
+      (if (= (length Posiblepix) 4)
+          (if (and (integer? (Obtener-X Posiblepix))
+                   (integer? (Obtener-Y Posiblepix))
+                   (string? (Obtener-Hex Posiblepix))
+                   (integer? (Obtener-D-Hex Posiblepix)))
+              #t
+              #f
+              )
+          #f
+          )
+      #f
+      )
+  )
+
+;Constructor imagen
+;Funcion constructora de la imagen
+;Se deben tener los otros constructores para generar la imagen
+;Dominio: Alto X Ancho X pixbit-d X pixrgb-d X pixhex-d
+;Recorrido: Imagen
+;Una vez obtenidos los contructores de los otros apartados, se debe construir el constructor central imagen
+
+(define imagen
+  (lambda(Alto Ancho . ConstructoresPrev)
+    (cons Alto(cons Ancho(cons ConstructoresPrev null)))))
+
+;La idea de esta funcion es utilizar los constructores generados
+;Como funciones de n variable
+;Ejemplo uso
+;(imagen 2 2(pixbit-d 0 0 1 100)(pixbit-d 0 0 1 20)(pixbit-d 0 0 1 70)(pixbit-d 0 0 0 0))
+;(imagen 2 2 (pixhex-d 0 0 "rojo" 100)(pixhex-d 0 0 "negro" 20)(pixhex-d 0 0 "blanco" 70)(pixhex-d 0 0 "azul" 0))
+;(imagen 2 2 (pixrgb-d 0 0 0 0 0 0) (pixrgb-d 1 1 1 1 1 1) (pixrgb-d 0 0 0 255 255 10) (pixrgb-d 0 1 1 1 0 0))
+
+;Selectores imagen
+;Se tienen los siguiente selectores para los elementos de la imagen
+;Se selecciona el alto de la imagen
+(define Obtener-Alto
+  (lambda(imagen)
+    (car imagen)))
+
+;Selector ancho imagen
+;Se selecciona el ancho de la imagen
+(define Obtener-Ancho
+  (lambda(imagen)
+    (car(cdr imagen))))
+
+;Selector para los constructores previamente hechos
+;Selecciona el ultimo elemento, es decir, las listas con los otros constructores
+(define Obtener-Listas-Pixel
+  (lambda(imagen)
+    (car(cdr(cdr imagen)))))
+
+;Pertenencia imagen
+;Se diseñan las pertenencias en cuanto al constructor imagen a diseñar, se usa lo previamente
+;Dominio: Imagen
+;Recorrido: Booleano
+;Recursion: No se usa
+;Se construye la pertenencia para un bitmap?
+
+(define bitmap?
+  (lambda(imagen)
+    (andmap pixbit-d? (Obtener-Listas-Pixel imagen))))
+
+;Ejemplo uso:
+;(bitmap? (imagen 2 2 (pixbit-d 0 0 1 10)(pixbit-d 0 1 0 20)(pixbit-d 1 0 0 30)(pixbit-d 1 1 1 4))) devuelve #t
+
+;Pertenencia pixmap
+;Se construye a base de los pixrgb-d?
+;Dominio: imagen
+;Recorrido: booleano
+;Recursion: No se usa
+
+(define pixmap?
+  (lambda(imagen)
+    (pixrgb-d? (Obtener-Listas-Pixel imagen))))
+
+;Ejemplo uso:
+;(pixmap? (imagen 2 2 (pixbit-d 0 0 1 10)(pixbit-d 0 1 0 20)(pixbit-d 1 0 0 30)(pixbit-d 1 1 1 4))) devuelve #f
+
+
+;Pertenencia hexmap
+;Se construye a partir de los pixhex-d?
+;Dominio: imagen
+;Recorrido: booleano
+;Recursion: No se usa
+
+(define hexmap?
+  (lambda(imagen)
+    (pixhex-d? (Obtener-Listas-Pixel imagen))))
+
+;Ejemplo uso
+;(hexmap? (imagen 2 2 (pixbit-d 0 0 1 100)(pixbit-d 0 0 1 20)(pixbit-d 0 0 1 70)(pixbit-d 0 0 0 0))) devuelve #f
+
+
+;Funcion para verificar si se puede comprimir una imagen 
+;Dominio: imagen
+;Recorrido: booleano
+;Recursion: No se usa
+
+(define compress?
+  (lambda(imagen)
+    (if(<(length(Obtener-Listas-Pixel imagen))(*(Obtener-Ancho imagen)(Obtener-Alto imagen)))
+       #t
+       #f)
+    )
+  )
+
+;Ejemplo uso:
+;(compress? (imagen 2 2 (pixbit-d  0 0 1 10) (pixbit-d  0 1 0 20) (pixbit-d 1 0 0 30) (pixbit-d 1 1 1 4))) ;Devuelve #f
+
+
+
+;Funcion mymap
+;Funcion construido para realizar una recursion
+;Dom: Lista X operacion X tamaño
+;Rec: Ejecutar una operacion hacia una lista
+
+(define mymap (lambda (lista operacion tamaño)
+                (if (= tamaño 0)
+                     lista
+                    (mymap (append (cdr lista) (list(operacion(car lista)))) operacion (- tamaño 1)))))
+
+
+;Funcion flipH, funcion que invierte una imagen de manera horizontal 
+;Para realizar esta funcion es necesario el constructor imagen
+;Dominio: Imagen
+;Recorrido: Imagen
+;Recursion: natural
+
+(define flipH (lambda (Imagen)(imagen(Obtener-Alto Imagen) (Obtener-Ancho Imagen) (mymap(Obtener-Listas-Pixel Imagen) (lambda(Pixeles)
+                                                                                                    (cond [(pixbit-d? Pixeles)(pixbit-d(Obtener-X Pixeles)(-(-(Obtener-Ancho Imagen)1)(Obtener-Y Pixeles))(Obtener-Bit Pixeles)(Obtener-Depth Pixeles))]
+                                                                                                          [(pixrgb-d? Pixeles)(pixrgb-d(Obtener-X Pixeles)(-(-(Obtener-Ancho Imagen 1)(Obtener-Y Pixeles))(Obtener-R Pixeles)(Obtener-G Pixeles)(Obtener-B Pixeles)(Obtener-D Pixeles)))]
+                                                                                                          [(pixhex-d? Pixeles)(pixhex-d(Obtener-X Pixeles)(-(-(Obtener-Ancho Imagen 1)(Obtener-Y Pixeles))(Obtener-Hex Pixeles)(Obtener-B Pixeles)))]))
+                                                                              (length(Obtener-Listas-Pixel Imagen))))))
+
+;Ejemplo uso:
+;(flipH(imagen 2 2(pixbit-d  0 0 1 10)(pixbit-d  0 1 0 20)(pixbit-d 1 0 0 30)(pixbit-d 1 1 1 4)))
+
+
+;Funcion flipV, funcion que invierte una imagen vertical
+;Dominio: imagen
+;Recorrido: imagen
+;Recorsion: natural
+
+(define flipV (lambda (Imagen)(imagen(Obtener-Alto Imagen) (Obtener-Ancho Imagen) (mymap(Obtener-Listas-Pixel Imagen) (lambda(Pixeles)
+                                                                                                    (cond
+                                                                                                      [(pixbit-d? Pixeles)(pixbit-d(Obtener-Y Pixeles)(-(-(Obtener-Alto Imagen) 1)(Obtener-X Pixeles))(Obtener-Bit Pixeles)(Obtener-Depth Pixeles))]
+                                                                                                          [(pixrgb-d? Pixeles)(pixrgb-d(Obtener-Y Pixeles)(-(-(Obtener-Alto Imagen 1)(Obtener-X Pixeles))(Obtener-R Pixeles)(Obtener-G Pixeles)(Obtener-B Pixeles)(Obtener-D Pixeles)))]
+                                                                                                          [(pixhex-d? Pixeles)(pixhex-d(Obtener-Y Pixeles)(-(-(Obtener-Alto Imagen 1)(Obtener-X Pixeles))(Obtener-Hex Pixeles)(Obtener-B Pixeles)))]))
+                                                                              (length(Obtener-Listas-Pixel Imagen))))))
+
+;Ejemplo uso:
+
+
+
+;Funcion crop, funcion que permite recortar una imagen en un par de puntos
+;Dominio: imagen X x1(int) X x2(int) X y1(int) X y2(int)
+;Recorrido: imagen
+;Recursion: natural
+;Nota: al final no pude corregirla
+
+(define crop
+  (lambda(imagen X1 X2 Y1 Y2)
+    (lambda(Pixel)
+      (mi-filtro imagen Pixel)
+      (cond
+        ([(>= Obtener-X Pixel(min X1 X2))(<= (Obtener-Y Pixel(max X1 X2)))#t]
+         [(>= Obtener-Y Pixel(min Y1 Y2))(<=(Obtener-Y Pixel(max Y1 Y2)))#t]
+         [(>= distancia(X1 X2 Y1 Y2))#t]
+         [(>= dif-Puntos(X1 X2 Y1 Y2))#t]
+         [(#f)])))))
+
+;Ejemplo uso
+;(crop imagen 10 10 40 40)
+
+
+;Funcion complemento para transformar de RGB a Hex
+;Dominio: Numero
+;Recorrido: Numero transformado a string
+
+(define convertirRGBToHex
+  (lambda(numero)
+    (string-append(cond
+                    [(<(truncate(/ numero 16))10)(number->string(truncate(/ numero 16)))]
+                    [(=(truncate(/ numero 16))10)"A"]
+                    [(=(truncate(/ numero 16))11)"B"]
+                    [(=(truncate(/ numero 16))12)"C"]
+                    [(=(truncate(/ numero 16))13)"D"]
+                    [(=(truncate(/ numero 16))14)"E"]
+                    [(=(truncate(/ numero 16))15)"F"])
+                  (cond
+                    [(<(remainder numero 16)10)(number->string(remainder numero 16))]
+                    [(=(remainder numero 16)10)"A"]
+                    [(=(remainder numero 16)11)"B"]
+                    [(=(remainder numero 16)12)"C"]
+                    [(=(remainder numero 16)13)"D"]
+                    [(=(remainder numero 16)14)"E"]
+                    [(=(remainder numero 16)15)"F"]))))
+
+
+
+;Funcion que permite la transformacion de una imagen RGB a HEX
+;Dom: Imagen
+;Recorrido: Imagen
+
+(define ImagenRGB->ImagenHex
+  (lambda(Imagen)
+    (imagen(Obtener-Alto Imagen)(Obtener-Ancho Imagen)(map(lambda(Pixeles)
+                                                            (pixhex-d(Obtener-X Pixeles)(Obtener-Y Pixeles)(string-append "#"(convertirRGBToHex(Obtener-R Pixeles))(convertirRGBToHex(Obtener-G Pixeles))(convertirRGBToHex(Obtener-B Pixeles)))(Obtener-D Pixeles)))
+                                                          (Obtener-Listas-Pixel Imagen)))))
+
+
+
+(ImagenRGB->ImagenHex (imagen 2 2 (pixrgb-d  0 0 10 10 10 10) (pixrgb-d  0 1 20 20 20 20) (pixrgb-d 1 0 30 30 30 30) (pixrgb-d 1 1 40 40 40 40)))
+
+
+
+
+
+;Funcion que permite reducir elementos en una lista
+;Dominio: Lista X contador
+;Recorrido: Lista reducida
+;Recursion: Natural
+
+(define reducir
+  (lambda (L fRedux cont)
+    (if (null? L) cont
+        (reducir (cdr L) fRedux (fRedux (car L) cont)))))
+
+
+;Funcion que permite realizar un mapeo a los elementos de una lista
+;Dominio: Lista X elementos
+;Recorrido: Lista
+;Recursion: Natural
+
+(define (mi-map funcion lista)
+  (cond
+    [(null? lista) null]
+    [else
+     (cons (funcion (car lista))
+           (mi-map funcion (cdr lista)))]))
+
+
+;Funcion que permite filtrar elementos especificos de una lista
+;Dominio: Lista X pred 
+;Recorrido: Lista
+;Recursion: Natural
+
+(define (mi-filtro pred lista)
+  (cond
+    [(null? lista) null]
+    [(pred (car lista))
+     (cons (car lista) (mi-filtro pred (cdr lista)))]
+    [else
+     (mi-filtro pred (cdr lista))]))
+
+
+;Funcion para aplicar una operacion a los elementos en una lista (Una ligera modificacion de la funcion my-map) que está más arriba
+;Y que además fue facilitada por el profe Gonzalo
+;Dominio: Lista X pred X Contador
+;Recorrido: Lista con elementos sumados
+;Recursion: natural
+
+(define my-map-modificado
+  (lambda(lista funcion contador)
+    (if(= contador 0)
+       lista
+       (my-map-modificado(append(cdr lista)(list(flatten(funcion(car lista))))(- contador 1))))))
+
+
+
+;Funcion para hacer la diferencia de restas 
+;Dominio: numero X numero
+;Recorrido: numero
+;Recursion no se usa
+
+(define dif-Puntos
+  (lambda(x1 x2 y1 y2)
+    (abs(+(- x2 x1)(- y2 y1)))))
+
+;Codigo para calcular la distancia
+;Ejemplo uso:
+;(dif-Puntos 2 4 2 1)
+
+
+;Obtener len de una lista de forma recursiva natural
+;Dominio: Lista
+;Recorrido: Largo lista
+;Funcion facilitada por el profe Gonzalo
+;Recursion: natural
+
+(define (length-1 list)
+  (if (null? list)
+      0
+      (+ 1
+         (length-1 (cdr list)))))
+
+;Funcion para obtener la distancia entre dos pares de puntos (X,Y)
+;Dominio: X(int) X Y(int)
+;Recorrido: int
+;Recursion: no se usa
+
+(define puntos
+  (lambda(X Y)
+    (sqrt(+(sqr X)(sqr Y)))))
+
+;Funcion para obtener la distancia (es un encapsulado de la funcion anterior)
+;Dominio: X1(int) X X2(int) X y1(int) X y2(int)
+;Recorrido: int
+;Recursion no se usa
+
+(define distancia
+  (lambda(X1 X2 Y1 Y2)
+    (puntos(- X1 X2)
+           (- Y1 Y2))))
+
+
+
+;Ejemplos de uso codigo
+
+(pixbit-d 30 40 1 10)
+(pixbit-d 10 20 0 5)
+(pixbit-d 2 4 1 6)
+(pixrgb-d 0 0 0 0 0 0)
+(pixrgb-d 0 1 1 1 1 1)
+(pixrgb-d 1 1 1 1 1 1)
+(pixhex-d 10 20 "Rojo" 0)
+(pixhex-d 2 4 "ffff" 0)
+(pixhex-d 1 1 "aaaa" 0)
+(imagen 2 2(pixbit-d 0 0 1 100)(pixbit-d 0 0 1 20)(pixbit-d 0 0 1 70)(pixbit-d 0 0 0 0))
+(imagen 2 2 (pixhex-d 0 0 "rojo" 100)(pixhex-d 0 0 "negro" 20)(pixhex-d 0 0 "blanco" 70)(pixhex-d 0 0 "azul" 0))
+(imagen 2 2 (pixrgb-d 0 0 0 0 0 0) (pixrgb-d 1 1 1 1 1 1) (pixrgb-d 0 0 0 255 255 10) (pixrgb-d 0 1 1 1 0 0))
+(bitmap? (imagen 2 2 (pixbit-d 0 0 1 10)(pixbit-d 0 1 0 20)(pixbit-d 1 0 0 30)(pixbit-d 1 1 1 4)))
+(bitmap? (imagen 2 2 (pixbit-d 0 0 1 0)(pixbit-d 0 1 0 0)(pixbit-d 1 0 0 0)(pixbit-d 1 1 1 0)))
+(pixmap? (imagen 2 2 (pixbit-d 0 0 1 10)(pixbit-d 0 1 0 20)(pixbit-d 1 0 0 30)(pixbit-d 1 1 1 4))) 
+(pixmap? (imagen 2 2 (pixhex-d 0 0 1 10)(pixhex-d 0 1 0 20)(pixhex-d 1 0 0 30)(pixhex-d 1 1 1 4)))
+(hexmap? (imagen 2 2 (pixbit-d 0 0 1 100)(pixbit-d 0 0 1 20)(pixbit-d 0 0 1 70)(pixbit-d 0 0 0 0))) 
+(hexmap? (imagen 2 2 (pixhex-d 0 0 1 100)(pixhex-d 0 0 1 20)(pixhex-d 0 0 1 70)(pixhex-d 0 0 0 0))) 
+(compress? (imagen 2 2 (pixbit-d  0 0 1 10) (pixbit-d  0 1 0 20) (pixbit-d 1 0 0 30) (pixbit-d 1 1 1 4)))
+(compress? (imagen 2 2 (pixbit-d  1 1 1 10) (pixbit-d  1 1 1 20) (pixbit-d 1 1 1 30) (pixbit-d 1 1 1 4)))
+(compress? (imagen 2 2 (pixbit-d  1 1 1 10) (pixbit-d  0 1 0 20) (pixbit-d 1 0 1 30) (pixbit-d 1 1 1 4)))
+(flipH(imagen 2 2(pixbit-d  0 0 1 10)(pixbit-d  0 1 0 20)(pixbit-d 1 0 0 30)(pixbit-d 1 1 1 4)))
+(flipH(imagen 2 2(pixbit-d  0 0 1 1)(pixbit-d  0 1 0 0)(pixbit-d 1 0 0 4)(pixbit-d 0 0 0 4))) 
+(flipH(imagen 2 2(pixbit-d  1 1 1 1)(pixbit-d  0 1 0 10)(pixbit-d 1 0 0 5)(pixbit-d 1 0 1 4)))
+(flipV (imagen 2 2 (pixbit-d  0 0 1 10) (pixbit-d  0 1 0 20) (pixbit-d 1 0 0 30) (pixbit-d 1 1 1 4)))
+(flipV (imagen 2 2 (pixbit-d  1 1 1 10) (pixbit-d  0 1 1 20) (pixbit-d 1 0 1 30) (pixbit-d 1 1 0 4)))
+(flipV (imagen 2 2 (pixbit-d  1 1 1 10) (pixbit-d  1 1 1 20) (pixbit-d 1 1 1 30) (pixbit-d 1 1 1 4)))
+(crop imagen 10 10 40 40)
+(crop imagen 5 2 10 10)
+(crop imagen 1 1 1 1)
+(ImagenRGB->ImagenHex (imagen 2 2 (pixrgb-d  0 0 30 40 10 10) (pixrgb-d  0 1 40 30 20 20) (pixrgb-d 1 0 20 20 30 30) (pixrgb-d 1 1 10 10 40 40)))
+(ImagenRGB->ImagenHex (imagen 2 2 (pixrgb-d  0 0 30 10 10 10) (pixrgb-d  0 1 40 20 20 20) (pixrgb-d 1 0 20 30 30 30) (pixrgb-d 1 1 10 10 40 40)))
+(ImagenRGB->ImagenHex (imagen 2 2 (pixrgb-d  0 0 30 20 10 10) (pixrgb-d  0 1 40 10 20 20) (pixrgb-d 1 0 20 40 30 30) (pixrgb-d 1 1 40 40 40 40)))
