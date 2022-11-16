@@ -1,5 +1,10 @@
 #lang racket
 
+;Nombre: Alex Mellado Gamboa
+;Asignatura: Paradigmas de programación
+;Laboratorio 1 Scheme.
+
+
 
 ;Definicion de(pixbit-d)
 ;Constructor pixbit-d
@@ -69,7 +74,7 @@
       [(integer? (Obtener-Y Posiblepix))#t]
       [(or(=(Obtener-Bit Posiblepix)0)(=(Obtener-Bit Posiblepix)1))#t]
       [(integer? (Obtener-Depth))#t]
-      [else #f])))
+      [#f])))
 
 
 ;TDA pixrgb-d (pixmap)
@@ -160,6 +165,8 @@
 
 ;Ejemplo uso
 ;(pixhex-d 10 20 "Rojo" 0)
+;(pixhex-d 5  10 "#ffff"0)
+;(pixhex-d 2  4  "#ffA0"0)
 
 
 ;Selectores pixhex-d
@@ -247,7 +254,7 @@
 
 (define bitmap?
   (lambda(imagen)
-    (pixbit-d? (Obtener-Listas-Pixel imagen))))
+    (andmap pixbit-d? (Obtener-Listas-Pixel imagen))))
 
 ;Ejemplo uso:
 ;(bitmap? (imagen 2 2 (pixbit-d 0 0 1 10)(pixbit-d 0 1 0 20)(pixbit-d 1 0 0 30)(pixbit-d 1 1 1 4))) devuelve #t
@@ -297,18 +304,16 @@
 ;(compress? (imagen 2 2 (pixbit-d  0 0 1 10) (pixbit-d  0 1 0 20) (pixbit-d 1 0 0 30) (pixbit-d 1 1 1 4))) ;Devuelve #f
 
 
-;Funcion auxiliar para proceder con flipH y para reducir la carga de dicha funcion
-;Dominio: imagen X VoltearPixel
-;Recorrido: imagen
-;Recursion: no se usa
 
-(define AuxFlipH
-  (lambda(imagen VoltearPixel)
-    (cond
-      ([(pixbit-d? VoltearPixel(pixbit-d(Obtener-X VoltearPixel(-(-(Obtener-Ancho imagen)1)(Obtener-Y VoltearPixel(Obtener-Bit VoltearPixel)(Obtener-Depth VoltearPixel))))))]
-       [(pixrgb-d? VoltearPixel)(pixrgb-d(Obtener-X VoltearPixel(-(-(Obtener-Ancho imagen)1)(Obtener-Y VoltearPixel)(Obtener-R VoltearPixel)(Obtener-G VoltearPixel)(Obtener-B VoltearPixel)(Obtener-D VoltearPixel))))]
-       [(pixhex-d? VoltearPixel(pixhex-d(Obtener-X VoltearPixel(-(-(Obtener-Ancho imagen)1)(Obtener-Y VoltearPixel)(Obtener-Hex VoltearPixel)(Obtener-D-Hex VoltearPixel)))))]
-       ))))
+;Funcion mymap
+;Funcion construido para realizar una recursion
+;Dom: Lista X operacion X tamaño
+;Rec: Ejecutar una operacion hacia una lista
+
+(define mymap (lambda (lista operacion tamaño)
+                (if (= tamaño 0)
+                     lista
+                    (mymap (append (cdr lista) (list(operacion(car lista)))) operacion (- tamaño 1)))))
 
 
 ;Funcion flipH, funcion que invierte una imagen de manera horizontal 
@@ -317,26 +322,14 @@
 ;Recorrido: Imagen
 ;Recursion: natural
 
-(define flipH
-  (lambda(imagen)
-    (lambda(Pixel)
-    (Obtener-Alto imagen * Obtener-Ancho imagen)(my-map-modificado(Obtener-Listas-Pixel imagen(AuxFlipH(imagen Pixel)))))))
+(define flipH (lambda (Imagen)(imagen(Obtener-Alto Imagen) (Obtener-Ancho Imagen) (mymap(Obtener-Listas-Pixel Imagen) (lambda(Pixeles)
+                                                                                                    (cond [(pixbit-d? Pixeles)(pixbit-d(Obtener-X Pixeles)(-(-(Obtener-Ancho Imagen)1)(Obtener-Y Pixeles))(Obtener-Bit Pixeles)(Obtener-Depth Pixeles))]
+                                                                                                          [(pixrgb-d? Pixeles)(pixrgb-d(Obtener-X Pixeles)(-(-(Obtener-Ancho Imagen 1)(Obtener-Y Pixeles))(Obtener-R Pixeles)(Obtener-G Pixeles)(Obtener-B Pixeles)(Obtener-D Pixeles)))]
+                                                                                                          [(pixhex-d? Pixeles)(pixhex-d(Obtener-X Pixeles)(-(-(Obtener-Ancho Imagen 1)(Obtener-Y Pixeles))(Obtener-Hex Pixeles)(Obtener-B Pixeles)))]))
+                                                                              (length(Obtener-Listas-Pixel Imagen))))))
 
 ;Ejemplo uso:
 ;(flipH(imagen 2 2(pixbit-d  0 0 1 10)(pixbit-d  0 1 0 20)(pixbit-d 1 0 0 30)(pixbit-d 1 1 1 4)))
-
-
-;Funcion AuxflipV, funcion que ayuda a la funcion flipV
-;Dominio: imagen
-;Recorrido: imagen
-;Recursion: no se usa
-
-(define AuxFlipV
-  (lambda(imagen VoltearPixel)
-    (cond
-      ([(pixbit-d? VoltearPixel(pixbit-d(Obtener-Y VoltearPixel(-(-(Obtener-Alto imagen)1(Obtener-X VoltearPixel)(Obtener-Bit VoltearPixel)(Obtener-Depth VoltearPixel))))))]
-       [(pixrgb-d? VoltearPixel(pixrgb-d(Obtener-Y VoltearPixel(-(-(Obtener-Alto imagen)1(Obtener-X VoltearPixel)(Obtener-R VoltearPixel(Obtener-G VoltearPixel)(Obtener-B VoltearPixel)(Obtener-D VoltearPixel)))))))]
-       [(pixhex-d? VoltearPixel(pixhex-d(Obtener-Y VoltearPixel(-(-(Obtener-Alto imagen)1(Obtener-X VoltearPixel)(Obtener-Hex VoltearPixel(Obtener-D-Hex VoltearPixel)))))))]))))
 
 
 ;Funcion flipV, funcion que invierte una imagen vertical
@@ -344,18 +337,22 @@
 ;Recorrido: imagen
 ;Recorsion: natural
 
-(define flipV
-  (lambda(imagen)
-    (lambda(Pixel)
-      (Obtener-Alto imagen * Obtener-Ancho imagen(my-map-modificado(Obtener-Listas-Pixel imagen(AuxFlipV(imagen Pixel))))))))
+(define flipV (lambda (Imagen)(imagen(Obtener-Alto Imagen) (Obtener-Ancho Imagen) (mymap(Obtener-Listas-Pixel Imagen) (lambda(Pixeles)
+                                                                                                    (cond
+                                                                                                      [(pixbit-d? Pixeles)(pixbit-d(Obtener-Y Pixeles)(-(-(Obtener-Alto Imagen) 1)(Obtener-X Pixeles))(Obtener-Bit Pixeles)(Obtener-Depth Pixeles))]
+                                                                                                          [(pixrgb-d? Pixeles)(pixrgb-d(Obtener-Y Pixeles)(-(-(Obtener-Alto Imagen 1)(Obtener-X Pixeles))(Obtener-R Pixeles)(Obtener-G Pixeles)(Obtener-B Pixeles)(Obtener-D Pixeles)))]
+                                                                                                          [(pixhex-d? Pixeles)(pixhex-d(Obtener-Y Pixeles)(-(-(Obtener-Alto Imagen 1)(Obtener-X Pixeles))(Obtener-Hex Pixeles)(Obtener-B Pixeles)))]))
+                                                                              (length(Obtener-Listas-Pixel Imagen))))))
 
 ;Ejemplo uso:
-;(flipV (imagen 2 2 (pixbit-d  0 0 1 10) (pixbit-d  0 1 0 20) (pixbit-d 1 0 0 30) (pixbit-d 1 1 1 4)))
+
+
 
 ;Funcion crop, funcion que permite recortar una imagen en un par de puntos
 ;Dominio: imagen X x1(int) X x2(int) X y1(int) X y2(int)
 ;Recorrido: imagen
 ;Recursion: natural
+;Nota: al final no pude corregirla
 
 (define crop
   (lambda(imagen X1 X2 Y1 Y2)
@@ -372,15 +369,48 @@
 ;(crop imagen 10 10 40 40)
 
 
-;Otras funciones que pueden ser de utilidad
-;Funcion para dejar una lista de una sola dimension
-;Dominio: Lista X elemento
-;Recorrido: Lista de una dimension
+;Funcion complemento para transformar de RGB a Hex
+;Dominio: Numero
+;Recorrido: Numero transformado a string
 
-(define (flatten x)
-  (cond ((null? x) '())
-        ((pair? x) (append (flatten (car x)) (flatten (cdr x))))
-        (else (list x))))
+(define convertirRGBToHex
+  (lambda(numero)
+    (string-append(cond
+                    [(<(truncate(/ numero 16))10)(number->string(truncate(/ numero 16)))]
+                    [(=(truncate(/ numero 16))10)"A"]
+                    [(=(truncate(/ numero 16))11)"B"]
+                    [(=(truncate(/ numero 16))12)"C"]
+                    [(=(truncate(/ numero 16))13)"D"]
+                    [(=(truncate(/ numero 16))14)"E"]
+                    [(=(truncate(/ numero 16))15)"F"])
+                  (cond
+                    [(<(remainder numero 16)10)(number->string(remainder numero 16))]
+                    [(=(remainder numero 16)10)"A"]
+                    [(=(remainder numero 16)11)"B"]
+                    [(=(remainder numero 16)12)"C"]
+                    [(=(remainder numero 16)13)"D"]
+                    [(=(remainder numero 16)14)"E"]
+                    [(=(remainder numero 16)15)"F"]))))
+
+
+
+;Funcion que permite la transformacion de una imagen RGB a HEX
+;Dom: Imagen
+;Recorrido: Imagen
+
+(define ImagenRGB->ImagenHex
+  (lambda(Imagen)
+    (imagen(Obtener-Alto Imagen)(Obtener-Ancho Imagen)(map(lambda(Pixeles)
+                                                            (pixhex-d(Obtener-X Pixeles)(Obtener-Y Pixeles)(string-append "#"(convertirRGBToHex(Obtener-R Pixeles))(convertirRGBToHex(Obtener-G Pixeles))(convertirRGBToHex(Obtener-B Pixeles)))(Obtener-D Pixeles)))
+                                                          (Obtener-Listas-Pixel Imagen)))))
+
+
+
+(ImagenRGB->ImagenHex (imagen 2 2 (pixrgb-d  0 0 10 10 10 10) (pixrgb-d  0 1 20 20 20 20) (pixrgb-d 1 0 30 30 30 30) (pixrgb-d 1 1 40 40 40 40)))
+
+
+
+
 
 ;Funcion que permite reducir elementos en una lista
 ;Dominio: Lista X contador
@@ -481,21 +511,38 @@
 
 
 
+;Ejemplos de uso codigo
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+(pixbit-d 30 40 1 10)
+(pixbit-d 10 20 0 5)
+(pixbit-d 2 4 1 6)
+(pixrgb-d 0 0 0 0 0 0)
+(pixrgb-d 0 1 1 1 1 1)
+(pixrgb-d 1 1 1 1 1 1)
+(pixhex-d 10 20 "Rojo" 0)
+(pixhex-d 2 4 "ffff" 0)
+(pixhex-d 1 1 "aaaa" 0)
+(imagen 2 2(pixbit-d 0 0 1 100)(pixbit-d 0 0 1 20)(pixbit-d 0 0 1 70)(pixbit-d 0 0 0 0))
+(imagen 2 2 (pixhex-d 0 0 "rojo" 100)(pixhex-d 0 0 "negro" 20)(pixhex-d 0 0 "blanco" 70)(pixhex-d 0 0 "azul" 0))
+(imagen 2 2 (pixrgb-d 0 0 0 0 0 0) (pixrgb-d 1 1 1 1 1 1) (pixrgb-d 0 0 0 255 255 10) (pixrgb-d 0 1 1 1 0 0))
+(bitmap? (imagen 2 2 (pixbit-d 0 0 1 10)(pixbit-d 0 1 0 20)(pixbit-d 1 0 0 30)(pixbit-d 1 1 1 4)))
+(bitmap? (imagen 2 2 (pixbit-d 0 0 1 0)(pixbit-d 0 1 0 0)(pixbit-d 1 0 0 0)(pixbit-d 1 1 1 0)))
+(pixmap? (imagen 2 2 (pixbit-d 0 0 1 10)(pixbit-d 0 1 0 20)(pixbit-d 1 0 0 30)(pixbit-d 1 1 1 4))) 
+(pixmap? (imagen 2 2 (pixhex-d 0 0 1 10)(pixhex-d 0 1 0 20)(pixhex-d 1 0 0 30)(pixhex-d 1 1 1 4)))
+(hexmap? (imagen 2 2 (pixbit-d 0 0 1 100)(pixbit-d 0 0 1 20)(pixbit-d 0 0 1 70)(pixbit-d 0 0 0 0))) 
+(hexmap? (imagen 2 2 (pixhex-d 0 0 1 100)(pixhex-d 0 0 1 20)(pixhex-d 0 0 1 70)(pixhex-d 0 0 0 0))) 
+(compress? (imagen 2 2 (pixbit-d  0 0 1 10) (pixbit-d  0 1 0 20) (pixbit-d 1 0 0 30) (pixbit-d 1 1 1 4)))
+(compress? (imagen 2 2 (pixbit-d  1 1 1 10) (pixbit-d  1 1 1 20) (pixbit-d 1 1 1 30) (pixbit-d 1 1 1 4)))
+(compress? (imagen 2 2 (pixbit-d  1 1 1 10) (pixbit-d  0 1 0 20) (pixbit-d 1 0 1 30) (pixbit-d 1 1 1 4)))
+(flipH(imagen 2 2(pixbit-d  0 0 1 10)(pixbit-d  0 1 0 20)(pixbit-d 1 0 0 30)(pixbit-d 1 1 1 4)))
+(flipH(imagen 2 2(pixbit-d  0 0 1 1)(pixbit-d  0 1 0 0)(pixbit-d 1 0 0 4)(pixbit-d 0 0 0 4))) 
+(flipH(imagen 2 2(pixbit-d  1 1 1 1)(pixbit-d  0 1 0 10)(pixbit-d 1 0 0 5)(pixbit-d 1 0 1 4)))
+(flipV (imagen 2 2 (pixbit-d  0 0 1 10) (pixbit-d  0 1 0 20) (pixbit-d 1 0 0 30) (pixbit-d 1 1 1 4)))
+(flipV (imagen 2 2 (pixbit-d  1 1 1 10) (pixbit-d  0 1 1 20) (pixbit-d 1 0 1 30) (pixbit-d 1 1 0 4)))
+(flipV (imagen 2 2 (pixbit-d  1 1 1 10) (pixbit-d  1 1 1 20) (pixbit-d 1 1 1 30) (pixbit-d 1 1 1 4)))
+(crop imagen 10 10 40 40)
+(crop imagen 5 2 10 10)
+(crop imagen 1 1 1 1)
+(ImagenRGB->ImagenHex (imagen 2 2 (pixrgb-d  0 0 30 40 10 10) (pixrgb-d  0 1 40 30 20 20) (pixrgb-d 1 0 20 20 30 30) (pixrgb-d 1 1 10 10 40 40)))
+(ImagenRGB->ImagenHex (imagen 2 2 (pixrgb-d  0 0 30 10 10 10) (pixrgb-d  0 1 40 20 20 20) (pixrgb-d 1 0 20 30 30 30) (pixrgb-d 1 1 10 10 40 40)))
+(ImagenRGB->ImagenHex (imagen 2 2 (pixrgb-d  0 0 30 20 10 10) (pixrgb-d  0 1 40 10 20 20) (pixrgb-d 1 0 20 40 30 30) (pixrgb-d 1 1 40 40 40 40)))
