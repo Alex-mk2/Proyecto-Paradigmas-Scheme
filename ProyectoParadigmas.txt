@@ -305,15 +305,17 @@
 
 
 
-;Funcion mymap
+;Funcion mapModificado
 ;Funcion construido para realizar una recursion
 ;Dom: Lista X operacion X tamaño
 ;Rec: Ejecutar una operacion hacia una lista
+;Esta version se construyo de una base previa como mi-map que esta mas abajo
+;Que fue facilitada por Gonzalo
 
-(define mymap (lambda (lista operacion tamaño)
+(define mapModificado (lambda (lista operacion tamaño)
                 (if (= tamaño 0)
                      lista
-                    (mymap (append (cdr lista) (list(operacion(car lista)))) operacion (- tamaño 1)))))
+                    (mapModificado (append (cdr lista) (list(operacion(car lista)))) operacion (- tamaño 1)))))
 
 
 ;Funcion flipH, funcion que invierte una imagen de manera horizontal 
@@ -322,7 +324,7 @@
 ;Recorrido: Imagen
 ;Recursion: natural
 
-(define flipH (lambda (Imagen)(imagen(Obtener-Alto Imagen) (Obtener-Ancho Imagen) (mymap(Obtener-Listas-Pixel Imagen) (lambda(Pixeles)
+(define flipH (lambda (Imagen)(imagen(Obtener-Alto Imagen) (Obtener-Ancho Imagen) (mapModificado(Obtener-Listas-Pixel Imagen) (lambda(Pixeles)
                                                                                                     (cond [(pixbit-d? Pixeles)(pixbit-d(Obtener-X Pixeles)(-(-(Obtener-Ancho Imagen)1)(Obtener-Y Pixeles))(Obtener-Bit Pixeles)(Obtener-Depth Pixeles))]
                                                                                                           [(pixrgb-d? Pixeles)(pixrgb-d(Obtener-X Pixeles)(-(-(Obtener-Ancho Imagen 1)(Obtener-Y Pixeles))(Obtener-R Pixeles)(Obtener-G Pixeles)(Obtener-B Pixeles)(Obtener-D Pixeles)))]
                                                                                                           [(pixhex-d? Pixeles)(pixhex-d(Obtener-X Pixeles)(-(-(Obtener-Ancho Imagen 1)(Obtener-Y Pixeles))(Obtener-Hex Pixeles)(Obtener-B Pixeles)))]))
@@ -337,7 +339,7 @@
 ;Recorrido: imagen
 ;Recorsion: natural
 
-(define flipV (lambda (Imagen)(imagen(Obtener-Alto Imagen) (Obtener-Ancho Imagen) (mymap(Obtener-Listas-Pixel Imagen) (lambda(Pixeles)
+(define flipV (lambda (Imagen)(imagen(Obtener-Alto Imagen) (Obtener-Ancho Imagen) (mapModificado(Obtener-Listas-Pixel Imagen) (lambda(Pixeles)
                                                                                                     (cond
                                                                                                       [(pixbit-d? Pixeles)(pixbit-d(Obtener-Y Pixeles)(-(-(Obtener-Alto Imagen) 1)(Obtener-X Pixeles))(Obtener-Bit Pixeles)(Obtener-Depth Pixeles))]
                                                                                                           [(pixrgb-d? Pixeles)(pixrgb-d(Obtener-Y Pixeles)(-(-(Obtener-Alto Imagen 1)(Obtener-X Pixeles))(Obtener-R Pixeles)(Obtener-G Pixeles)(Obtener-B Pixeles)(Obtener-D Pixeles)))]
@@ -406,7 +408,49 @@
 
 
 
-(ImagenRGB->ImagenHex (imagen 2 2 (pixrgb-d  0 0 10 10 10 10) (pixrgb-d  0 1 20 20 20 20) (pixrgb-d 1 0 30 30 30 30) (pixrgb-d 1 1 40 40 40 40)))
+;(ImagenRGB->ImagenHex (imagen 2 2 (pixrgb-d  0 0 10 10 10 10) (pixrgb-d  0 1 20 20 20 20) (pixrgb-d 1 0 30 30 30 30) (pixrgb-d 1 1 40 40 40 40)))
+
+
+
+;Funcion que realiza la construcción de un histograma
+;Dom: Imagen
+;Rec: Estructura de un histograma
+;En lo personal, no se me ocurrio manera de hacer el histograma, pero si una idea que se tenía en cuenta con el flip, solo que en vez de obtener un alto, seria la imagen
+
+(define Histograma (lambda (Imagen)(lambda(Pixeles)
+                                    (cond [(pixbit-d? Pixeles)(pixbit-d(Obtener-X Pixeles)(((Obtener-Listas-Pixel Imagen))(Obtener-Y Pixeles))(Obtener-Bit Pixeles)(Obtener-Depth Pixeles))]
+                                          [(pixrgb-d? Pixeles)(pixrgb-d(Obtener-X Pixeles)(((Obtener-Listas-Pixel Imagen)(Obtener-Y Pixeles))(Obtener-R Pixeles)(Obtener-G Pixeles)(Obtener-B Pixeles)(Obtener-D Pixeles)))]
+                                          [(pixhex-d? Pixeles)(pixhex-d(Obtener-X Pixeles)(((Obtener-Listas-Pixel Imagen)(Obtener-Y Pixeles))(Obtener-Hex Pixeles)(Obtener-B Pixeles)))]))
+                                    ))
+
+
+
+;Funcion que se utilizará para la construcción del rotate90
+;Funcion que permite realizar un mapeo a los elementos de una lista
+;Dominio: Lista X elementos
+;Recorrido: Lista
+;Recursion: Natural
+
+(define (mi-map funcion lista)
+  (cond
+    [(null? lista) null]
+    [else
+     (cons (funcion (car lista))
+           (mi-map funcion (cdr lista)))]))
+
+
+;Funcion que permite rotar una imagen en 90 grados
+;Dom: Imagen
+;Rec: Imagen
+;Su procedimiento es similar al flipV, pero hay que modificarlo un poco para poder rotar la imagen
+
+
+(define rotar90 (lambda (Imagen)(list(Obtener-Alto Imagen)(Obtener-Ancho Imagen)(mi-map(lambda(Pixeles)
+                                                                                                    (cond [(pixbit-d? Pixeles)(pixbit-d(Obtener-X Pixeles)(-(-(Obtener-Alto Imagen)1)(Obtener-Y Pixeles))(Obtener-Bit Pixeles)(Obtener-Depth Pixeles))]
+                                                                                                          [(pixrgb-d? Pixeles)(pixrgb-d(Obtener-X Pixeles)(-(-(Obtener-Alto Imagen 1)(Obtener-Y Pixeles))(Obtener-R Pixeles)(Obtener-G Pixeles)(Obtener-B Pixeles)(Obtener-D Pixeles)))]
+                                                                                                          [(pixhex-d? Pixeles)(pixhex-d(Obtener-X Pixeles)(-(-(Obtener-Alto Imagen 1)(Obtener-Y Pixeles))(Obtener-Hex Pixeles)(Obtener-B Pixeles)))]))
+                                                                              (Obtener-Listas-Pixel Imagen)))))
+
 
 
 
@@ -423,17 +467,7 @@
         (reducir (cdr L) fRedux (fRedux (car L) cont)))))
 
 
-;Funcion que permite realizar un mapeo a los elementos de una lista
-;Dominio: Lista X elementos
-;Recorrido: Lista
-;Recursion: Natural
 
-(define (mi-map funcion lista)
-  (cond
-    [(null? lista) null]
-    [else
-     (cons (funcion (car lista))
-           (mi-map funcion (cdr lista)))]))
 
 
 ;Funcion que permite filtrar elementos especificos de una lista
@@ -450,20 +484,6 @@
      (mi-filtro pred (cdr lista))]))
 
 
-;Funcion para aplicar una operacion a los elementos en una lista (Una ligera modificacion de la funcion my-map) que está más arriba
-;Y que además fue facilitada por el profe Gonzalo
-;Dominio: Lista X pred X Contador
-;Recorrido: Lista con elementos sumados
-;Recursion: natural
-
-(define my-map-modificado
-  (lambda(lista funcion contador)
-    (if(= contador 0)
-       lista
-       (my-map-modificado(append(cdr lista)(list(flatten(funcion(car lista))))(- contador 1))))))
-
-
-
 ;Funcion para hacer la diferencia de restas 
 ;Dominio: numero X numero
 ;Recorrido: numero
@@ -476,6 +496,8 @@
 ;Codigo para calcular la distancia
 ;Ejemplo uso:
 ;(dif-Puntos 2 4 2 1)
+
+
 
 
 ;Obtener len de una lista de forma recursiva natural
@@ -543,6 +565,12 @@
 (crop imagen 10 10 40 40)
 (crop imagen 5 2 10 10)
 (crop imagen 1 1 1 1)
-(ImagenRGB->ImagenHex (imagen 2 2 (pixrgb-d  0 0 30 40 10 10) (pixrgb-d  0 1 40 30 20 20) (pixrgb-d 1 0 20 20 30 30) (pixrgb-d 1 1 10 10 40 40)))
-(ImagenRGB->ImagenHex (imagen 2 2 (pixrgb-d  0 0 30 10 10 10) (pixrgb-d  0 1 40 20 20 20) (pixrgb-d 1 0 20 30 30 30) (pixrgb-d 1 1 10 10 40 40)))
-(ImagenRGB->ImagenHex (imagen 2 2 (pixrgb-d  0 0 30 20 10 10) (pixrgb-d  0 1 40 10 20 20) (pixrgb-d 1 0 20 40 30 30) (pixrgb-d 1 1 40 40 40 40)))
+(ImagenRGB->ImagenHex (imagen 2 2 (pixrgb-d  0 0 30 40 10 10)(pixrgb-d  0 1 40 30 20 20)(pixrgb-d 1 0 20 20 30 30)(pixrgb-d 1 1 10 10 40 40)))
+(ImagenRGB->ImagenHex (imagen 2 2 (pixrgb-d  0 0 30 10 10 10)(pixrgb-d  0 1 40 20 20 20)(pixrgb-d 1 0 20 30 30 30)(pixrgb-d 1 1 10 10 40 40)))
+(ImagenRGB->ImagenHex (imagen 2 2 (pixrgb-d  0 0 30 20 10 10)(pixrgb-d  0 1 40 10 20 20)(pixrgb-d 1 0 20 40 30 30)(pixrgb-d 1 1 40 40 40 40)))
+(Histograma (imagen 2 2 (pixbit-d  0 0 1 10) (pixbit-d  0 1 0 20)(pixbit-d 1 0 0 30) (pixbit-d 1 1 1 4)))
+(Histograma (imagen 2 2 (pixbit-d  1 1 1 10) (pixbit-d  1 1 1 20) (pixbit-d 1 1 1 30) (pixbit-d 1 1 1 4)))
+(Histograma (imagen 2 2 (pixbit-d  1 1 1 10) (pixbit-d  0 1 1 20) (pixbit-d 1 0 1 30) (pixbit-d 1 1 0 4)))
+(rotar90 (imagen 2 2 (pixbit-d  0 0 1 10) (pixbit-d  0 1 0 20) (pixbit-d 1 0 0 30) (pixbit-d 1 1 1 4)))
+(rotar90 (imagen 2 2 (pixbit-d  1 1 1 10) (pixbit-d  1 1 1 20) (pixbit-d 1 1 1 30) (pixbit-d 1 1 1 4)))
+(rotar90 (imagen 2 2 (pixbit-d  1 1 1 10) (pixbit-d  0 1 1 20) (pixbit-d 1 0 1 30) (pixbit-d 1 1 0 4)))
